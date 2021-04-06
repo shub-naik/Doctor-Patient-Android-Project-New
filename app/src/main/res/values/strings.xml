@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">DoctorPatient Consultation</string>
+
+    <string name="introduction_title">Doctor Patient Consultation</string>
+    <string name="registerDoctorTxtView">Register a Doctor</string>
+    <string name="registerPatientTxtView">Register a Patient</string>
+
+    <!-- Role Login Text String -->
+    <string name="adminLogin">Admin Login</string>
+    <string name="doctorLogin">Doctor Login</string>
+    <string name="patientLogin">Patient Login</string>
+
+    <!-- Admin Username Text String-->
+    <string name="adminUsername">Enter Admin Username : </string>
+    <string name="adminPassword">Enter Admin Password : </string>
+    <string name="cancelLogin">Cancel Login</string>
+    <string name="loginNow">Login Now</string>
+
+    <!-- Admin Role Text String-->
+    <string name="doctor_signUp">Doctor SignUp</string>
+    <string name="patient_signUp">Patient SignUp</string>
+    <string name="enter_name">Enter Your Name : </string>
+    <string name="enter_password">Enter Your Password : </string>
+    <string name="enter_phone">Enter Your 10 digit Phone Number : </string>
+    <string name="doctor_code_btn">Enter Code and Continue</string>
+    <string name="code_et_hint">Enter 6 Digit Otp Code and  Continue</string>
+
+    <!-- Doctor - Patient Login Text String -->
+    <string name="doctor_login">Doctor Login</string>
+    <string name="patient_login">Patient Login</string>
+    <string name="empty_field_error">All Fields are Mandatory !!!</string>
+
+    <!-- Shared Preferences Text String -->
+    <string name="PatientCredential">PatientCredential</string>
+    <string name="DoctorCredential">DoctorCredential</string>
+    <string name="AdminCredential">AdminCredential</string>
+
+    <!-- Available Doctors List Item Text String -->
+    <string name="availableDoctorImageContentDescription">Doctor Profile Image View</string>
+    <string name="availableDoctorVideoCallBtnContentDescription">Doctor Profile Image View</string>
+    <string name="availableDoctorUsername">Doctor Username</string>
+    <string name="availableDoctorPhone">Doctor Phone</string>
+    <string name="availableDoctorUserDegreeInfo">Doctor Degree</string>
+
+    <!-- Doctor Section Text String -->
+    <string name="doctorUsernameTextTitle">Username Value :</string>
+    <string name="doctorUsernameTextValue">Username Value :</string>
+    <string name="save_profile">Save Profile</string>
+    <string name="to_time">To Time</string>
+    <string name="to_date">To Date</string>
+    <string name="to">To :</string>
+    <string name="from">From :</string>
+    <string name="choose_working_date_and_time">Choose Working Date And Time :</string>
+    <string name="from_date">From Date</string>
+    <string name="from_time">From Time</string>
+    <string name="your_phone">Your Phone :</string>
+    <string name="phone_value">Phone Value:</string>
+
+</resources>

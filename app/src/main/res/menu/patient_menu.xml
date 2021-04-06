@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/PatientLogoutMenuItem"
+        android:icon="@drawable/ic_baseline_exit_to_app_24"
+        android:iconTint="@color/black"
+        android:title="Logout"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/PatientProfileMenuItem"
+        android:icon="@drawable/ic_baseline_person_add_24"
+        android:iconTint="@color/black"
+        android:title="View/Edit Profile"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/searchIconMenu"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="Search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+</menu>

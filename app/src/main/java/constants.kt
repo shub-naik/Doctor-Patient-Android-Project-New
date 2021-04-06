@@ -1,0 +1,1 @@
+const val AVAILABLE_DOCTORS_LIST_CONSTANT = "availableDoctorsRecyclerViewItemsList"
