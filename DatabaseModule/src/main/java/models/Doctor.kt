@@ -9,7 +9,8 @@ class Doctor(
     @NonNull doctorUsername: String,
     @NonNull doctorPhone: String,
     @NonNull val doctorPassword: String,
-    @NonNull val doctorDegreeList: List<String>
+    @NonNull val doctorDegreeList: List<String>,
+    @NonNull val doctorAvailableTimingList: List<String>
 ) :
     Person(doctorUsername, doctorPhone), Parcelable {
 
@@ -18,6 +19,7 @@ class Doctor(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.createStringArrayList()!!,
         parcel.createStringArrayList()!!
     )
 
@@ -27,6 +29,9 @@ class Doctor(
                 && doctorDegreeList.containsAll(other.doctorDegreeList) && other.doctorDegreeList.containsAll(
                     doctorDegreeList
                 )
+                && doctorAvailableTimingList.containsAll(other.doctorAvailableTimingList) && other.doctorAvailableTimingList.containsAll(
+                    doctorAvailableTimingList
+                )
             )
                 return true
         }
@@ -35,8 +40,11 @@ class Doctor(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(doctorId)
+        parcel.writeString(super.personName)
+        parcel.writeString(super.personPhone)
         parcel.writeString(doctorPassword)
         parcel.writeStringList(doctorDegreeList)
+        parcel.writeStringList(doctorAvailableTimingList)
     }
 
     override fun describeContents(): Int {

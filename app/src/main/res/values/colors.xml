@@ -10,5 +10,7 @@
 
     <color name="cardBackground">#C1A1FA</color>
     <color name="videoCallBtnBackground">#C9B1F3</color>
+    <color name="appointmentHistoryDateBackground">#D5C1F8</color>
+    <color name="appointmentHistoryTimeBackground">#6B588C</color>
 
 </resources>

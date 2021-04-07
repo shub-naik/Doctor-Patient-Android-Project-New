@@ -5,17 +5,12 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import com.shubham.databasemodule.DataBase.Companion.getDummyAvailableDoctorData
+import com.shubham.databasemodule.DataBase
 import com.shubham.doctorpatientandroidappnew.MainActivity
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientMainBinding
@@ -27,14 +22,13 @@ import patient.interfaces.AvailableDoctorItemInterface
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 
 class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
     private var isScrolling = false // Used for recycler view scrolling
 
     private lateinit var binding: ActivityPatientMainBinding
     private lateinit var searchView: androidx.appcompat.widget.SearchView
-    private var availableDoctorsList: ArrayList<Doctor> = getDummyAvailableDoctorData()
+    private var availableDoctorsList: ArrayList<Doctor> = ArrayList()
 
     private val adapter: AvailableDoctorsAdapter by lazy { AvailableDoctorsAdapter(this) }
     private val backgroundExecutor: ScheduledExecutorService by lazy { Executors.newSingleThreadScheduledExecutor() }
@@ -50,7 +44,11 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
                 savedInstanceState.getParcelableArrayList<Doctor>(AVAILABLE_DOCTORS_LIST_CONSTANT)!!
 
         val availableDoctorsRecyclerView = binding.AvailableDoctorsRecyclerView
-//        val availableDoctorsList: List<Doctor> = DataBase.getRegisteredDoctorList()
+
+        if (DataBase.getRegisteredDoctorList().isNotEmpty())
+            availableDoctorsList = ArrayList(DataBase.getRegisteredDoctorList())
+        else
+            getToast(this, "No Doctors Are Available At this Moment").show()
 
         adapter.setAvailableDoctorsAdapterData(availableDoctorsList)
         availableDoctorsRecyclerView.adapter = adapter
@@ -58,52 +56,52 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         availableDoctorsRecyclerView.layoutManager = manager
 
         // Recycler View On Scroll Listener
-        availableDoctorsRecyclerView.addOnScrollListener(object : OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val currentItemsCount = manager.childCount
-                val totalItemCount = manager.itemCount
-                val scrollOutItemsCount = manager.findFirstVisibleItemPosition()
-
-                if (isScrolling && (totalItemCount == currentItemsCount + scrollOutItemsCount)) {
-                    // Fetch data remotely
-                    isScrolling = false
-                    fetchMoreData()
-                }
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
-                    isScrolling = true
-            }
-        })
+//        availableDoctorsRecyclerView.addOnScrollListener(object : OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//                val currentItemsCount = manager.childCount
+//                val totalItemCount = manager.itemCount
+//                val scrollOutItemsCount = manager.findFirstVisibleItemPosition()
+//
+//                if (isScrolling && (totalItemCount == currentItemsCount + scrollOutItemsCount)) {
+//                    // Fetch data remotely
+//                    isScrolling = false
+//                    fetchMoreData()
+//                }
+//            }
+//
+//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                super.onScrollStateChanged(recyclerView, newState)
+//                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
+//                    isScrolling = true
+//            }
+//        })
     }
 
-    private fun fetchMoreData() {
-        if (availableDoctorsList.size >= 30)
-            return
-        binding.AvailableDoctorsRecyclerViewProgressBar.visibility = View.VISIBLE
-
-        backgroundExecutor.schedule({
-            availableDoctorsList.addAll(getDummyAvailableDoctorData())
-            mainExec.execute {
-                adapter.setAvailableDoctorsAdapterData(
-                    availableDoctorsList
-                )
-
-                // Recycler View Position State Starts Here
-                val recyclerViewState: Parcelable? =
-                    binding.AvailableDoctorsRecyclerView.layoutManager?.onSaveInstanceState()
-                binding.AvailableDoctorsRecyclerView.layoutManager?.onRestoreInstanceState(
-                    recyclerViewState
-                )
-                // Recycler View Position State Ends Here
-
-                binding.AvailableDoctorsRecyclerViewProgressBar.visibility = View.GONE
-            }
-        }, 3, TimeUnit.SECONDS)
-    }
+//    private fun fetchMoreData() {
+//        if (availableDoctorsList.size >= 30)
+//            return
+//        binding.AvailableDoctorsRecyclerViewProgressBar.visibility = View.VISIBLE
+//
+//        backgroundExecutor.schedule({
+//            availableDoctorsList.addAll(getDummyAvailableDoctorData())
+//            mainExec.execute {
+//                adapter.setAvailableDoctorsAdapterData(
+//                    availableDoctorsList
+//                )
+//
+//                // Recycler View Position State Starts Here
+//                val recyclerViewState: Parcelable? =
+//                    binding.AvailableDoctorsRecyclerView.layoutManager?.onSaveInstanceState()
+//                binding.AvailableDoctorsRecyclerView.layoutManager?.onRestoreInstanceState(
+//                    recyclerViewState
+//                )
+//                // Recycler View Position State Ends Here
+//
+//                binding.AvailableDoctorsRecyclerViewProgressBar.visibility = View.GONE
+//            }
+//        }, 3, TimeUnit.SECONDS)
+//    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -164,6 +162,10 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
                 getToast(this, "User Profile Selected").show()
                 true
             }
+            R.id.PatientAppointmentCheckMeuItem -> {
+                startActivity(Intent(this, PatientAppointmentHistoryActivity::class.java))
+                true
+            }
             R.id.searchIconMenu -> {
                 true
             }
@@ -172,6 +174,11 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
     }
 
     override fun onItemClick(position: Int) {
-        getToast(this, "$position is clicked").show()
+        if (position >= 0 && position <= availableDoctorsList.size - 1) {
+            val intent = Intent(this, PatientBookAppointmentActivity::class.java)
+            intent.putExtra("SelectedDoctor", availableDoctorsList[position])
+            startActivity(intent)
+        } else
+            getToast(this, "Some Error Occurred in Available List").show()
     }
 }

@@ -17,6 +17,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/PatientAppointmentCheckMeuItem"
+        android:icon="@drawable/ic_baseline_person_add_24"
+        android:iconTint="@color/black"
+        android:title="Check Appointment History"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/searchIconMenu"
         android:icon="@drawable/ic_baseline_search_24"
         android:title="Search"

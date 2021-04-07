@@ -55,5 +55,10 @@
     <string name="from_time">From Time</string>
     <string name="your_phone">Your Phone :</string>
     <string name="phone_value">Phone Value:</string>
+    <string name="choose_the_time_of_appointment">Choose The Time Value From Below Available Timings :</string>
+    <string name="book_appointment">Book An Appointment</string>
+    <string name="select_date_of_appointment">Select Date Of Appointment</string>
+    <string name="appointment_history_date">Appointment History Date</string>
+    <string name="appointment_history_time">Appointment History Time</string>
 
 </resources>
