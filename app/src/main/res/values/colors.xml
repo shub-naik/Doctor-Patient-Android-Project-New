@@ -8,9 +8,18 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="controlActivated">#D60B0B</color>
+
     <color name="cardBackground">#C1A1FA</color>
     <color name="videoCallBtnBackground">#C9B1F3</color>
     <color name="appointmentHistoryDateBackground">#D5C1F8</color>
-    <color name="appointmentHistoryTimeBackground">#6B588C</color>
+    <color name="red">#AA1C2C</color>
+    <color name="greyish">#3C3939</color>
+    <color name="disabled">#D3D3D3</color>
 
+    <!-- For Light Theme -->
+    <color name="LightThemeBoldTitleTextView">@color/black</color>
+
+    <!-- For Dark Theme -->
+    <color name="DarkThemeBoldTitleTextView">@color/white</color>
 </resources>

@@ -10,6 +10,7 @@ import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityRegisterRoleBinding
 import exceptions.Exceptions
 import helperFunctions.getToast
+import helperFunctions.showSoftKeyboard
 
 class RegisterRoleActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterRoleBinding
@@ -94,6 +95,8 @@ class RegisterRoleActivity : AppCompatActivity() {
                 }
             }
         }
+
+        showSoftKeyboard(binding.RoleSignUpUsernameEt)
     }
 
     private fun addDoctorDataToDatabase(

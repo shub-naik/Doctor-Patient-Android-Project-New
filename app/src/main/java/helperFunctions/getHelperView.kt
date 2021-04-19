@@ -3,6 +3,7 @@ package helperFunctions
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 
@@ -16,5 +17,18 @@ fun getSnackBar(layout: View, message: String, duration: Int = Snackbar.LENGTH_L
         duration
     )
 
+fun showSoftKeyboard(view: View) {
+    if (view.requestFocus()) {
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+}
+
 fun getPatientSharedPreferences(context: Context): SharedPreferences =
     context.getSharedPreferences("PatientSharedPref", Context.MODE_PRIVATE)
+
+fun getDoctorSharedPreferences(context: Context): SharedPreferences =
+    context.getSharedPreferences("DoctorSharedPref", Context.MODE_PRIVATE)
+
+fun getDarkModeSharedPreferences(context: Context): SharedPreferences =
+    context.getSharedPreferences("DarkModeSharedPref", Context.MODE_PRIVATE)

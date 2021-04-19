@@ -11,12 +11,12 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:hint="@string/adminUsername"
         android:textColorHint="@color/black"
         android:textCursorDrawable="@null"
         app:boxStrokeColor="@color/black"
-        app:errorEnabled="true">
+        app:errorEnabled="true"
+        app:hintTextColor="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -35,6 +35,7 @@
         android:textCursorDrawable="@null"
         app:boxStrokeColor="@color/black"
         app:errorEnabled="true"
+        app:hintTextColor="@color/black"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/black">
 

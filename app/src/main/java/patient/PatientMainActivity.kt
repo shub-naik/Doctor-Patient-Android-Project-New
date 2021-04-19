@@ -1,15 +1,22 @@
 package patient
 
 import AVAILABLE_DOCTORS_LIST_CONSTANT
+import AVAILABLE_DOCTORS_SEARCH_LIST_CONSTANT
+import SELECTED_DOCTOR
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.shubham.databasemodule.DataBase
 import com.shubham.doctorpatientandroidappnew.MainActivity
 import com.shubham.doctorpatientandroidappnew.R
@@ -22,6 +29,7 @@ import patient.interfaces.AvailableDoctorItemInterface
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
     private var isScrolling = false // Used for recycler view scrolling
@@ -39,15 +47,20 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         binding = ActivityPatientMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Comment from here
+        DataBase.createDummyDocData()
+        // Comment Till here
+
         if (savedInstanceState?.getParcelableArrayList<Doctor>(AVAILABLE_DOCTORS_LIST_CONSTANT) != null)
             availableDoctorsList =
                 savedInstanceState.getParcelableArrayList<Doctor>(AVAILABLE_DOCTORS_LIST_CONSTANT)!!
 
         val availableDoctorsRecyclerView = binding.AvailableDoctorsRecyclerView
 
-        if (DataBase.getRegisteredDoctorList().isNotEmpty())
-            availableDoctorsList = ArrayList(DataBase.getRegisteredDoctorList())
-        else
+        if (DataBase.getRegisteredDoctorList().isNotEmpty()) {
+            availableDoctorsList = ArrayList(DataBase.getPartsOfRegisteredDoctorList())
+            getToast(this, "${availableDoctorsList.size}").show()
+        } else
             getToast(this, "No Doctors Are Available At this Moment").show()
 
         adapter.setAvailableDoctorsAdapterData(availableDoctorsList)
@@ -56,52 +69,53 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         availableDoctorsRecyclerView.layoutManager = manager
 
         // Recycler View On Scroll Listener
-//        availableDoctorsRecyclerView.addOnScrollListener(object : OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                val currentItemsCount = manager.childCount
-//                val totalItemCount = manager.itemCount
-//                val scrollOutItemsCount = manager.findFirstVisibleItemPosition()
-//
-//                if (isScrolling && (totalItemCount == currentItemsCount + scrollOutItemsCount)) {
-//                    // Fetch data remotely
-//                    isScrolling = false
-//                    fetchMoreData()
-//                }
-//            }
-//
-//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-//                super.onScrollStateChanged(recyclerView, newState)
-//                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
-//                    isScrolling = true
-//            }
-//        })
+        availableDoctorsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val currentItemsCount = manager.childCount
+                val totalItemCount = manager.itemCount
+                val scrollOutItemsCount = manager.findFirstVisibleItemPosition()
+
+                if (isScrolling && (totalItemCount == currentItemsCount + scrollOutItemsCount)) {
+                    // Fetch data remotely
+                    isScrolling = false
+                    fetchMoreData()
+                }
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
+                    isScrolling = true
+            }
+        })
     }
 
-//    private fun fetchMoreData() {
-//        if (availableDoctorsList.size >= 30)
-//            return
-//        binding.AvailableDoctorsRecyclerViewProgressBar.visibility = View.VISIBLE
-//
-//        backgroundExecutor.schedule({
-//            availableDoctorsList.addAll(getDummyAvailableDoctorData())
-//            mainExec.execute {
-//                adapter.setAvailableDoctorsAdapterData(
-//                    availableDoctorsList
-//                )
-//
-//                // Recycler View Position State Starts Here
-//                val recyclerViewState: Parcelable? =
-//                    binding.AvailableDoctorsRecyclerView.layoutManager?.onSaveInstanceState()
-//                binding.AvailableDoctorsRecyclerView.layoutManager?.onRestoreInstanceState(
-//                    recyclerViewState
-//                )
-//                // Recycler View Position State Ends Here
-//
-//                binding.AvailableDoctorsRecyclerViewProgressBar.visibility = View.GONE
-//            }
-//        }, 3, TimeUnit.SECONDS)
-//    }
+    private fun fetchMoreData() {
+        if (availableDoctorsList.size == DataBase.getRegisteredDoctorList().size)
+            return
+
+        binding.AvailableDoctorsRecyclerViewProgressBar.visibility = View.VISIBLE
+
+        backgroundExecutor.schedule({
+            availableDoctorsList.addAll(DataBase.getPartsOfRegisteredDoctorList())
+            mainExec.execute {
+                adapter.setAvailableDoctorsAdapterData(
+                    availableDoctorsList
+                )
+
+                // Recycler View Position State Starts Here
+                val recyclerViewState: Parcelable? =
+                    binding.AvailableDoctorsRecyclerView.layoutManager?.onSaveInstanceState()
+                binding.AvailableDoctorsRecyclerView.layoutManager?.onRestoreInstanceState(
+                    recyclerViewState
+                )
+                // Recycler View Position State Ends Here
+
+                binding.AvailableDoctorsRecyclerViewProgressBar.visibility = View.GONE
+            }
+        }, 3, TimeUnit.SECONDS)
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -116,33 +130,44 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         backgroundExecutor.shutdown()
     }
 
+    private lateinit var searchIconItem: MenuItem
+
     // Options Menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.patient_menu, menu)
-        // Associate searchable configuration with the SearchView
-        val searchManager =
-            getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView =
-            menu.findItem(R.id.searchIconMenu).actionView as androidx.appcompat.widget.SearchView
-        searchView.setSearchableInfo(
-            searchManager
-                .getSearchableInfo(componentName)
-        )
-        searchView.maxWidth = Int.MAX_VALUE
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchIconItem = menu.findItem(R.id.searchIconMenu)
+        searchView = searchIconItem.actionView as androidx.appcompat.widget.SearchView
+        searchView.setIconifiedByDefault(false)
+//        searchView.queryHint = getString(R.string.patientSearchViewHint)
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 
         searchView.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                adapter.filter.filter(query)
+                val resultData = adapter.getAvailableDoctorsList()
+                val intent = Intent(
+                    this@PatientMainActivity,
+                    PatientSearchResultActivity::class.java
+                )
+                intent.action = Intent.ACTION_SEARCH
+                intent.putExtra("query", query)
+                intent.putParcelableArrayListExtra(
+                    AVAILABLE_DOCTORS_SEARCH_LIST_CONSTANT,
+                    ArrayList<Doctor>(resultData)
+                )
+                startActivity(intent)
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 adapter.filter.filter(newText)
+                Log.e("onQueryText", "onQueryTextChanged: Changed")
                 return false
             }
         })
-        return true
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -173,12 +198,17 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         }
     }
 
-    override fun onItemClick(position: Int) {
-        if (position >= 0 && position <= availableDoctorsList.size - 1) {
-            val intent = Intent(this, PatientBookAppointmentActivity::class.java)
-            intent.putExtra("SelectedDoctor", availableDoctorsList[position])
-            startActivity(intent)
-        } else
-            getToast(this, "Some Error Occurred in Available List").show()
+    override fun onItemClick(doctor: Doctor) {
+        searchIconItem.collapseActionView()
+        val intent = Intent(this, PatientBookAppointmentActivity::class.java)
+        intent.putExtra(SELECTED_DOCTOR, doctor)
+        startActivity(intent)
+    }
+
+    private fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            if (item !== exception) item.isVisible = visible
+        }
     }
 }

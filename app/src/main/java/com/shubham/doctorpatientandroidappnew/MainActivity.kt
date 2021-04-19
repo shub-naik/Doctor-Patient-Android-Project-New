@@ -1,5 +1,7 @@
 package com.shubham.doctorpatientandroidappnew
 
+import DOCTOR_CREDENTIAL
+import PATIENT_CREDENTIAL
 import admin.ChooseRoleActivity
 import android.app.Dialog
 import android.app.ProgressDialog
@@ -8,13 +10,20 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import appDarkModeState
 import com.shubham.databasemodule.DataBase
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityMainBinding
 import com.shubham.doctorpatientandroidappnew.databinding.AdminLoginLayoutBinding
+import doctor.DoctorProfileActivity
 import doctorPatientCommon.DoctorPatientLoginActivity
+import helperFunctions.getDarkModeSharedPreferences
+import helperFunctions.getDoctorSharedPreferences
 import helperFunctions.getPatientSharedPreferences
 import helperFunctions.getToast
 import patient.PatientMainActivity
@@ -24,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adminLoginDialogBinding: AdminLoginLayoutBinding
     private lateinit var dialog: Dialog
     private lateinit var progressDialog: ProgressDialog
+    private lateinit var mainMenuItem: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,11 +43,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Checking Shared Preferences for Redirection to Respective Screens
-        val sharedPreferences = getPatientSharedPreferences(this)
-        val patientCredential =
-            sharedPreferences.getString(getString(R.string.PatientCredential), null)
+        // 1) For Patient
+        val patientSharedPreferences = getPatientSharedPreferences(this)
+        val patientCredential = patientSharedPreferences.getString(PATIENT_CREDENTIAL, null)
         if (patientCredential != null) {
             startActivity(Intent(this, PatientMainActivity::class.java))
+            finish()
+            return
+        }
+
+        // 2) For Doctor
+        val doctorSharedPreferences = getDoctorSharedPreferences(this)
+        val doctorCredential = doctorSharedPreferences.getString(DOCTOR_CREDENTIAL, null)
+        if (doctorCredential != null) {
+            startActivity(Intent(this, DoctorProfileActivity::class.java))
             finish()
             return
         }
@@ -116,6 +135,43 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, DoctorPatientLoginActivity::class.java)
         intent.putExtra("LoginRoleType", loginRoleType)
         startActivity(intent)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        mainMenuItem = menu!!.findItem(R.id.LightNightIconSwitch)
+
+        val darkModeSharedPref = getDarkModeSharedPreferences(this)
+        if (darkModeSharedPref.getBoolean(appDarkModeState, false))
+            mainMenuItem.setIcon(R.drawable.ic_baseline_wb_sunny_24)
+        else
+            mainMenuItem.setIcon(R.drawable.ic_baseline_dark_mode_24)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.LightNightIconSwitch -> {
+                val darkModeSharedPref = getDarkModeSharedPreferences(this)
+                val editor = darkModeSharedPref.edit()
+                val isNightMode = darkModeSharedPref.getBoolean(appDarkModeState, false)
+                if (!isNightMode) {
+                    // changed to night mode , previous light mode
+                    mainMenuItem.setIcon(R.drawable.ic_baseline_wb_sunny_24)
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    editor.putBoolean(appDarkModeState, true)
+                } else {
+                    // Changed to light mode , previous night mode
+                    mainMenuItem.setIcon(R.drawable.ic_baseline_dark_mode_24)
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    editor.putBoolean(appDarkModeState, false)
+                }
+                editor.apply()
+                editor.commit()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 }

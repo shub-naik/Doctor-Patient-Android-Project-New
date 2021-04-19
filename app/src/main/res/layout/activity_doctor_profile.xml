@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -70,90 +71,40 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/choose_working_date_and_time"
-            android:textColor="@color/purple_700"
-            android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/from"
-            android:textSize="20sp" />
+            android:layout_marginTop="10dp"
+            android:text="@string/select_time_using_add_new_button"
+            android:textColor="@color/purple_500"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <LinearLayout
+            android:id="@+id/DynamicDoctorProfileLinearLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
 
-            <Button
-                android:id="@+id/FromDateBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@color/purple_700"
-                android:text="@string/from_date"
-                android:textColor="@color/white"
-                tools:ignore="ButtonStyle" />
-
-            <Button
-                android:id="@+id/FromTimeBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@color/purple_700"
-                android:text="@string/from_time"
-                android:textColor="@color/white" />
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/to"
-            android:textSize="20sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/ToDateBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@color/purple_700"
-                android:text="@string/to_date"
-                android:textColor="@color/white" />
-
-            <Button
-                android:id="@+id/ToTimeBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@color/purple_700"
-                android:text="@string/to_time"
-                android:textColor="@color/white" />
-
-        </LinearLayout>
 
         <Button
-            android:id="@+id/SaveProfileInfo"
-            android:layout_width="match_parent"
+            android:id="@+id/AddNewTimingBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:drawableEnd="@drawable/ic_baseline_add_24"
+            android:text="@string/add_new_timing"
+            android:textAllCaps="false"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/DoctorSaveProfileBtn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:background="@color/purple_700"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:elevation="1dp"
             android:text="@string/save_profile"
-            android:textColor="@color/white" />
-
+            android:textAllCaps="false"
+            android:textSize="15sp" />
     </LinearLayout>
-
 </ScrollView>

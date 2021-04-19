@@ -1,4 +1,7 @@
 <resources>
+    <!-- Lorem Text -->
+    <string name="lorem_text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+
     <string name="app_name">DoctorPatient Consultation</string>
 
     <string name="introduction_title">Doctor Patient Consultation</string>
@@ -15,6 +18,7 @@
     <string name="adminPassword">Enter Admin Password : </string>
     <string name="cancelLogin">Cancel Login</string>
     <string name="loginNow">Login Now</string>
+    <string name="patientSearchViewHint">Enter The Doctor Name</string>
 
     <!-- Admin Role Text String-->
     <string name="doctor_signUp">Doctor SignUp</string>
@@ -59,6 +63,11 @@
     <string name="book_appointment">Book An Appointment</string>
     <string name="select_date_of_appointment">Select Date Of Appointment</string>
     <string name="appointment_history_date">Appointment History Date</string>
-    <string name="appointment_history_time">Appointment History Time</string>
-
+    <string name="appointment_history_time">Appointment History Time : </string>
+    <string name="add_new_timing">Add New Time</string>
+    <string name="select_time">Select Time</string>
+    <string name="delete_this_item">Delete This Item</string>
+    <string name="select_time_using_add_new_button">Select Time Using `Add New Button +` :</string>
+    <string name="please_select_the_above_timePicker_or_delete_it">Please Select The Above TimePicker or Delete It</string>
+    <string name="night_light_mode">Night-Light Mode</string>
 </resources>

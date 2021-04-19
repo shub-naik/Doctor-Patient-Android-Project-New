@@ -9,11 +9,10 @@ class Doctor(
     @NonNull doctorUsername: String,
     @NonNull doctorPhone: String,
     @NonNull val doctorPassword: String,
-    @NonNull val doctorDegreeList: List<String>,
-    @NonNull val doctorAvailableTimingList: List<String>
+    @NonNull val doctorDegreeList: ArrayList<String>,
+    @NonNull val doctorAvailableTimingList: ArrayList<String>
 ) :
     Person(doctorUsername, doctorPhone), Parcelable {
-
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
@@ -26,12 +25,12 @@ class Doctor(
     override fun equals(other: Any?): Boolean {
         if (other is Doctor) {
             if (doctorId == other.doctorId && personName == other.personName && personPhone == other.personPhone && doctorPassword == other.doctorPassword
-                && doctorDegreeList.containsAll(other.doctorDegreeList) && other.doctorDegreeList.containsAll(
-                    doctorDegreeList
-                )
-                && doctorAvailableTimingList.containsAll(other.doctorAvailableTimingList) && other.doctorAvailableTimingList.containsAll(
-                    doctorAvailableTimingList
-                )
+//                && doctorDegreeList.containsAll(other.doctorDegreeList) && other.doctorDegreeList.containsAll(
+//                    doctorDegreeList
+//                )
+//                && doctorAvailableTimingList.containsAll(other.doctorAvailableTimingList) && other.doctorAvailableTimingList.containsAll(
+//                    doctorAvailableTimingList
+//                )
             )
                 return true
         }

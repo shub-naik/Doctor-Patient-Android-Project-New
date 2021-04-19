@@ -1,14 +1,18 @@
 package doctorPatientCommon
 
+import DOCTOR_CREDENTIAL
+import PATIENT_CREDENTIAL
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.shubham.databasemodule.DataBase
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityDoctorPatientLoginBinding
+import doctor.DoctorProfileActivity
 import doctorPatientCommon.dialogs.LoadingDialog
+import helperFunctions.getDoctorSharedPreferences
 import helperFunctions.getPatientSharedPreferences
 import helperFunctions.getSnackBar
 import patient.PatientMainActivity
@@ -29,6 +33,10 @@ class DoctorPatientLoginActivity : AppCompatActivity() {
 
         // show Custom Dialog after clicking Login Button
         val loadingDialog = LoadingDialog(this)
+
+        // Request Focus For Phone Number Field Automatically
+        binding.RoleLoginPhoneEt.isFocusableInTouchMode = true
+        binding.RoleLoginPhoneEt.requestFocus()
 
         // BackGround and Main Executor
         val mainExecutor: Executor = ContextCompat.getMainExecutor(this)
@@ -66,13 +74,12 @@ class DoctorPatientLoginActivity : AppCompatActivity() {
                                     ).show()
                                 }
                             else {
-                                // Save Data To Shared Preferences
+                                // Save Data To Patient Shared Preferences
                                 val sharedPreferences = getPatientSharedPreferences(this)
                                 val editor = sharedPreferences.edit()
-                                editor.putString(getString(R.string.PatientCredential), phone)
+                                editor.putString(PATIENT_CREDENTIAL, phone)
                                 editor.apply()
                                 editor.commit()
-
                                 startActivity(Intent(this, PatientMainActivity::class.java))
                                 finish()
                             }
@@ -96,6 +103,7 @@ class DoctorPatientLoginActivity : AppCompatActivity() {
                         backgroundExecutor.schedule({
                             // Call Backend Method For Doctor Login Check
                             val check = DataBase.checkDoctorLogin(phone, password)
+                            loadingDialog.stopLoadingDialog()
                             if (!check)
                                 mainExecutor.execute {
                                     getSnackBar(
@@ -103,7 +111,16 @@ class DoctorPatientLoginActivity : AppCompatActivity() {
                                         "Invalid Login Found !!!"
                                     ).show()
                                 }
-                            loadingDialog.stopLoadingDialog()
+                            else {
+                                // Save Data To Doctor Shared Preferences
+                                val sharedPreferences = getDoctorSharedPreferences(this)
+                                val editor = sharedPreferences.edit()
+                                editor.putString(DOCTOR_CREDENTIAL, phone)
+                                editor.apply()
+                                editor.commit()
+                                startActivity(Intent(this, DoctorProfileActivity::class.java))
+                                finish()
+                            }
                         }, 3, TimeUnit.SECONDS)
                     }
                 }

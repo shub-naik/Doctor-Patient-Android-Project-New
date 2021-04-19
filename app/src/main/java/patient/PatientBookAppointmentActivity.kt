@@ -1,9 +1,12 @@
 package patient
 
+import PATIENT_CREDENTIAL
+import SELECTED_DOCTOR
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -31,8 +34,10 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
         binding = ActivityPatientBookAppointmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val intent = intent
-        val selectedDoctor = intent.getParcelableExtra<Doctor>("SelectedDoctor")
+        val selectedDoctor = intent.getParcelableExtra<Doctor>(SELECTED_DOCTOR)
         if (selectedDoctor != null) {
             binding.DoctorProfileImgViewForPatient.setImageResource(R.drawable.ic_baseline_video_call_24)
             binding.DoctorProfileUsernameForPatient.text = selectedDoctor.personName
@@ -62,7 +67,7 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
                 if (this::dateOfAppointmentObject.isInitialized && timeSelected != null) {
                     val sharedPref = getPatientSharedPreferences(this)
                     val patientCredential =
-                        sharedPref.getString(getString(R.string.PatientCredential), null)
+                        sharedPref.getString(PATIENT_CREDENTIAL, null)
                     if (patientCredential != null) {
                         val mapData = mapOf(
                             "patientCredentials" to patientCredential,
@@ -104,9 +109,21 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
                 }, currentYear, currentMonth, currentDate
             )
         datePickerDialog.setCancelable(false)
-        datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+//        datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+        datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 14
         datePickerDialog.datePicker.maxDate = calendar.timeInMillis + 1000 * 60 * 60 * 24 * 14
         datePickerDialog.setTitle(getString(R.string.select_date_of_appointment))
         datePickerDialog.show()
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }

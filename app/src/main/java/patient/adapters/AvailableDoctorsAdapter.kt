@@ -1,6 +1,5 @@
 package patient.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,8 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
     RecyclerView.Adapter<AvailableDoctorsAdapter.ViewHolder>(), Filterable {
     private var availableDoctorFilterList = mutableListOf<Doctor>()
     private var availableDoctorsList = mutableListOf<Doctor>()
+
+    fun getAvailableDoctorsList() = availableDoctorFilterList.toList()
 
     inner class ViewHolder(listItemView: View) : RecyclerView.ViewHolder(listItemView) {
         val doctorProfileImageView: ImageView =
@@ -46,7 +47,7 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
         viewHolder.doctorDegreeTxtView.text = availableDoctor.doctorDegreeList.joinToString(",")
 
         viewHolder.doctorVideoCallBtn.setOnClickListener {
-            availableDoctorItemInterface.onItemClick(adapterPos)
+            availableDoctorItemInterface.onItemClick(availableDoctor)
         }
     }
 
@@ -72,39 +73,34 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
                 return filterResults
             }
 
-            override fun publishResults(
-                charSequence: CharSequence,
-                filterResults: FilterResults
-            ) {
-                availableDoctorFilterList = filterResults.values as MutableList<Doctor>
-                Log.e(
-                    "PublishResults",
-                    "Filtered List size is : ${availableDoctorFilterList.size} and old list size is : ${availableDoctorsList.size}"
-                )
+            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                val l = filterResults.values
+                if (l != null)
+                    availableDoctorFilterList = l as MutableList<Doctor>
 //                notifyDataSetChanged()
                 searchedAdapterData(availableDoctorFilterList)
             }
         }
     }
 
-    fun searchedAdapterData(list: List<Doctor>) {
-        val availableDoctorDiffUtil = AvailableDoctorDiffUtil(availableDoctorsList, list)
-        val diffResults = DiffUtil.calculateDiff(availableDoctorDiffUtil)
-        diffResults.dispatchUpdatesTo(this)
-    }
-
     // Recycler View Set Data
-    fun setAvailableDoctorsAdapterData(
-        availableDoctorList: List<Doctor>
-    ) {
+    fun setAvailableDoctorsAdapterData(availableDoctorList: List<Doctor>) {
         this.availableDoctorsList = availableDoctorList.toMutableList()
-
         val availableDoctorDiffUtil =
             AvailableDoctorDiffUtil(this.availableDoctorsList, availableDoctorFilterList)
         val diffResults = DiffUtil.calculateDiff(availableDoctorDiffUtil)
-
         availableDoctorFilterList = this.availableDoctorsList
-
         diffResults.dispatchUpdatesTo(this)
+    }
+
+    fun searchedAdapterData(list: List<Doctor>) {
+        try {
+            val availableDoctorDiffUtil = AvailableDoctorDiffUtil(availableDoctorsList, list)
+            val diffResults = DiffUtil.calculateDiff(availableDoctorDiffUtil)
+            availableDoctorFilterList = list.toMutableList()
+            diffResults.dispatchUpdatesTo(this)
+        } catch (exception: IndexOutOfBoundsException) {
+
+        }
     }
 }

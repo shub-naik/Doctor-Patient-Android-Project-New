@@ -1,5 +1,7 @@
 package patient.interfaces
 
+import models.Doctor
+
 interface AvailableDoctorItemInterface {
-    fun onItemClick(position: Int)
+    fun onItemClick(doctor: Doctor)
 }

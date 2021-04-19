@@ -3,35 +3,51 @@
     package="com.shubham.doctorpatientandroidappnew">
 
     <application
+        android:name="application.ApplicationClass"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DoctorPatientAndroidAppNew">
-        <activity android:name="patient.PatientAppointmentHistoryActivity"></activity>
-        <activity android:name="patient.PatientBookAppointmentActivity" />
-        <activity android:name="doctor.DoctorProfileActivity" />
-        <activity android:name="patient.PatientMainActivity">
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
 
+        <!--Patient search Activity Starts Here -->
+        <activity android:name="patient.PatientSearchResultActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+        <activity android:name="patient.PatientMainActivity">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <!--Patient search Activity Ends Here -->
+        <activity android:name="SampleTestingProject.Sample.Sample1" />
+        <activity
+            android:name="SampleTestingProject.Constraintlayout3"
+            android:parentActivityName="SampleTestingProject.Constraintlayout2">
+            <meta-data
+                android:name="android.support.PARENT_PARENT_ACTIVITY"
+                android:value="SampleTestingProject.Constraintlayout2" />
+        </activity>
+        <activity android:name="SampleTestingProject.Constraintlayout2" />
+        <activity android:name="SampleTestingProject.ConstraintLayoutActivity" />
+        <activity android:name="patient.PatientAppointmentHistoryActivity" />
+        <activity android:name="patient.PatientBookAppointmentActivity" />
+        <activity android:name="doctor.DoctorProfileActivity" />
         <activity
             android:name="doctorPatientCommon.DoctorPatientLoginActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="admin.RegisterRoleActivity"
-            android:parentActivityName="admin.ChooseRoleActivity" />
+            android:parentActivityName="admin.ChooseRoleActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name="admin.ChooseRoleActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
