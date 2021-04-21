@@ -26,20 +26,19 @@ class DataBase {
                 "MS", "MSc", "MSurg", "DSurg", "DS"
             )
 
-        private var counter = 1
-        fun createDummyDocData() {
-            for (i in 1..20) {
-                registeredDoctorList.add(
-                    Doctor(
-                        "$i", "$counter", "$i", "$i",
-                        ArrayList<String>(),
-                        getRandomDegreeList
-                            ()
-                    )
-                )
-                counter++
-            }
-        }
+//        private var counter = 1
+//        fun createDummyDocData() {
+//            for (i in 1..20) {
+//                registeredDoctorList.add(
+//                    Doctor(
+//                        "$i", "$counter", "$i", "$i",
+//                        getRandomDegreeList(),
+//                        ArrayList<String>()
+//                    )
+//                )
+//                counter++
+//            }
+//        }
 
         // For Getting Random Degree to a Doctor
         private fun getRandomDegreeList(): ArrayList<String> {
@@ -103,10 +102,10 @@ class DataBase {
 
         // For registering Patient
         private val registeredPatientList = mutableListOf<Patient>()
-        fun addPatientToRegisteredDoctorList(dataMap: Map<String, String>) {
-            val docList =
+        fun addPatientToRegisteredList(dataMap: Map<String, String>): Boolean {
+            val patList =
                 registeredPatientList.filter { it.personPhone == dataMap["PatientPhone"] }.toList()
-            if (docList.isNotEmpty())
+            if (patList.isNotEmpty())
                 throw Exceptions("Patient Already Exists With This Phone Number - ${dataMap["PatientPhone"]}")
             val patient = Patient(
                 getUid(),
@@ -114,7 +113,7 @@ class DataBase {
                 dataMap["PatientPhone"] ?: error("Phone Number Required"),
                 dataMap["PatientPassword"] ?: error("Password Required")
             )
-            registeredPatientList.add(patient)
+            return registeredPatientList.add(patient)
         }
 
         // Doctor - Patient Login Check

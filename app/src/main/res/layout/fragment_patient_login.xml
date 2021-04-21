@@ -5,43 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
-        android:id="@+id/topView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@drawable/ic_wave"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imgViewLoginIcon"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="92dp"
-        android:src="@drawable/ic_baseline_person_24"
-        app:civ_border_color="#FF000000"
-        app:civ_border_width="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/roleLoginHeadingTxtView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/doctor_login"
-        android:textColor="@color/black"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topView" />
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/DoctorLoginPhoneEt"
+        app:layout_constraintVertical_bias="0.2"
+        android:id="@+id/PatientLoginPhoneEt"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,9 +17,11 @@
         android:textCursorDrawable="@null"
         app:boxStrokeColor="@color/black"
         app:errorEnabled="true"
-        app:layout_constraintLeft_toRightOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/roleLoginHeadingTxtView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:startIconDrawable="@drawable/ic_baseline_phone_24">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -67,7 +35,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/DoctorLoginPasswordEt"
+        android:id="@+id/PatientLoginPasswordEt"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,7 +47,7 @@
         app:errorEnabled="true"
         app:layout_constraintLeft_toRightOf="parent"
         app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/DoctorLoginPhoneEt"
+        app:layout_constraintTop_toBottomOf="@+id/PatientLoginPhoneEt"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/black"
         app:startIconDrawable="@drawable/ic_baseline_password_24">
@@ -95,18 +63,15 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/DoctorLoginBtn"
+        android:id="@+id/PatientLoginBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_baseline_login_24"
-        android:drawableLeft="@drawable/ic_baseline_login_24"
-        android:padding="10dp"
-        android:text="@string/doctor_login"
+        android:text="@string/patient_login"
         app:icon="@drawable/ic_baseline_login_24"
         app:iconGravity="textStart"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/DoctorLoginPasswordEt" />
+        app:layout_constraintTop_toBottomOf="@+id/PatientLoginPasswordEt" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

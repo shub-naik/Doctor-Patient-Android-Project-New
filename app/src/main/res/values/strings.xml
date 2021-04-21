@@ -70,4 +70,10 @@
     <string name="select_time_using_add_new_button">Select Time Using `Add New Button +` :</string>
     <string name="please_select_the_above_timePicker_or_delete_it">Please Select The Above TimePicker or Delete It</string>
     <string name="night_light_mode">Night-Light Mode</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="are_you_a_doctor">Are You A Doctor, Go To Doctor Login ?</string>
+    <string name="are_you_a_admin">Are you a Admin ?</string>
+    <string name="no_updated_timings_available_for_the_appointment_by_the_doctor">No Updated Timings Available For the Appointment by the Doctor</string>
 </resources>

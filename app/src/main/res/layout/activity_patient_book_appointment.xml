@@ -67,6 +67,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <TextView
+            android:id="@+id/NoTimeAvailableTxtView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/no_updated_timings_available_for_the_appointment_by_the_doctor"
+            android:visibility="gone" />
+
         <Button
             android:id="@+id/BookAppointmentBtnForPatient"
             android:layout_width="match_parent"

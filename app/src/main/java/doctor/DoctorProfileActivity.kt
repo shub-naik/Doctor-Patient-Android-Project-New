@@ -15,11 +15,11 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.shubham.databasemodule.DataBase
-import com.shubham.doctorpatientandroidappnew.MainActivity
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityDoctorProfileBinding
 import helperFunctions.getDoctorSharedPreferences
 import helperFunctions.getToast
+import patient.PatientLoginSignUpActivity
 import java.time.LocalTime
 import java.util.*
 import kotlin.collections.ArrayList
@@ -143,7 +143,7 @@ class DoctorProfileActivity : AppCompatActivity() {
                     apply()
                 }
                 getToast(this, "Doctor Logout Selected").show()
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, PatientLoginSignUpActivity::class.java))
                 finish()
                 true
             }

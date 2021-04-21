@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def lifecycle_version = "2.3.1"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -56,6 +57,9 @@ dependencies {
 
     // Circular ImageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    // For Animations
+    implementation "com.airbnb.android:lottie:3.4.0"
 
     // View Model and Live Data for Data Persistance
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"

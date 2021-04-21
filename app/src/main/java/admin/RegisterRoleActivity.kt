@@ -139,7 +139,7 @@ class RegisterRoleActivity : AppCompatActivity() {
         patientPassword: String
     ) {
         try {
-            DataBase.addPatientToRegisteredDoctorList(
+            DataBase.addPatientToRegisteredList(
                 mapOf(
                     "PatientUsername" to patientUsername,
                     "PatientPhone" to patientPhone,

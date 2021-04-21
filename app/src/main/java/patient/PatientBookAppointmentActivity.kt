@@ -1,5 +1,6 @@
 package patient
 
+import PATIENT_BOOK_APPOINTMENT_TITLE
 import PATIENT_CREDENTIAL
 import SELECTED_DOCTOR
 import android.app.DatePickerDialog
@@ -7,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -17,6 +19,7 @@ import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientBookAppointmentBinding
 import helperFunctions.getPatientSharedPreferences
 import helperFunctions.getSnackBar
+import helperFunctions.getSupportActionBarView
 import helperFunctions.getToast
 import models.Doctor
 import patient.adapters.AvailableDoctorTimingAdapter
@@ -34,7 +37,7 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
         binding = ActivityPatientBookAppointmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        this.getSupportActionBarView(PATIENT_BOOK_APPOINTMENT_TITLE)
 
         val intent = intent
         val selectedDoctor = intent.getParcelableExtra<Doctor>(SELECTED_DOCTOR)
@@ -55,6 +58,9 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
             Log.e("PatientBookApp", "onCreate: ${selectedDoctor.doctorAvailableTimingList}")
             adapter = AvailableDoctorTimingAdapter(this, selectedDoctor.doctorAvailableTimingList)
             binding.DoctorAvailableTimingsRecyclerViewForPatient.adapter = adapter
+
+            if (selectedDoctor.doctorAvailableTimingList.isEmpty())
+                binding.NoTimeAvailableTxtView.visibility = View.VISIBLE
 
             // from Date Picker Dialog
             binding.DateOfAppointmentBtn.setOnClickListener {

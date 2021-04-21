@@ -22,13 +22,13 @@
         android:padding="15dp"
         android:text="@string/registerDoctorTxtView" />
 
-    <Button
-        android:id="@+id/registerPatientBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/button_bg_rounded_corners"
-        android:padding="15dp"
-        android:text="@string/registerPatientTxtView" />
+    <!--    <Button-->
+    <!--        android:id="@+id/registerPatientBtn"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:background="@drawable/button_bg_rounded_corners"-->
+    <!--        android:padding="15dp"-->
+    <!--        android:text="@string/registerPatientTxtView" />-->
 
 </LinearLayout>

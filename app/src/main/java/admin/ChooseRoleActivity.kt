@@ -21,12 +21,12 @@ class ChooseRoleActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.registerPatientBtn.setOnClickListener {
-            Log.e("UserRoleFound", "User Patient Role Found")
-            val intent = Intent(this, RegisterRoleActivity::class.java)
-            intent.putExtra("register_type", "patient")
-            startActivity(intent)
-        }
+//        binding.registerPatientBtn.setOnClickListener {
+//            Log.e("UserRoleFound", "User Patient Role Found")
+//            val intent = Intent(this, RegisterRoleActivity::class.java)
+//            intent.putExtra("register_type", "patient")
+//            startActivity(intent)
+//        }
 
     }
 }

@@ -12,13 +12,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.shubham.databasemodule.DataBase
-import com.shubham.doctorpatientandroidappnew.MainActivity
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientMainBinding
 import helperFunctions.getPatientSharedPreferences
@@ -47,9 +44,9 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         binding = ActivityPatientMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Comment from here
-        DataBase.createDummyDocData()
-        // Comment Till here
+//        // Comment from here
+//        DataBase.createDummyDocData()
+//        // Comment Till here
 
         if (savedInstanceState?.getParcelableArrayList<Doctor>(AVAILABLE_DOCTORS_LIST_CONSTANT) != null)
             availableDoctorsList =
@@ -58,7 +55,8 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         val availableDoctorsRecyclerView = binding.AvailableDoctorsRecyclerView
 
         if (DataBase.getRegisteredDoctorList().isNotEmpty()) {
-            availableDoctorsList = ArrayList(DataBase.getPartsOfRegisteredDoctorList())
+//            availableDoctorsList = ArrayList(DataBase.getPartsOfRegisteredDoctorList())
+            availableDoctorsList = ArrayList(DataBase.getRegisteredDoctorList())
             getToast(this, "${availableDoctorsList.size}").show()
         } else
             getToast(this, "No Doctors Are Available At this Moment").show()
@@ -69,26 +67,26 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         availableDoctorsRecyclerView.layoutManager = manager
 
         // Recycler View On Scroll Listener
-        availableDoctorsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val currentItemsCount = manager.childCount
-                val totalItemCount = manager.itemCount
-                val scrollOutItemsCount = manager.findFirstVisibleItemPosition()
-
-                if (isScrolling && (totalItemCount == currentItemsCount + scrollOutItemsCount)) {
-                    // Fetch data remotely
-                    isScrolling = false
-                    fetchMoreData()
-                }
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
-                    isScrolling = true
-            }
-        })
+//        availableDoctorsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//                val currentItemsCount = manager.childCount
+//                val totalItemCount = manager.itemCount
+//                val scrollOutItemsCount = manager.findFirstVisibleItemPosition()
+//
+//                if (isScrolling && (totalItemCount == currentItemsCount + scrollOutItemsCount)) {
+//                    // Fetch data remotely
+//                    isScrolling = false
+//                    fetchMoreData()
+//                }
+//            }
+//
+//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                super.onScrollStateChanged(recyclerView, newState)
+//                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
+//                    isScrolling = true
+//            }
+//        })
     }
 
     private fun fetchMoreData() {
@@ -179,7 +177,7 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
                     apply()
                 }
                 getToast(this, "User Logout Selected").show()
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, PatientLoginSignUpActivity::class.java))
                 finish()
                 true
             }

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/button_bg_rounded_corners"
+    android:background="@color/white"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -14,24 +14,24 @@
         android:padding="15dp"
         android:text="@string/adminLogin" />
 
-    <Button
-        android:id="@+id/doctorLoginBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/adminLoginBtn"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/button_bg_rounded_corners"
-        android:padding="15dp"
-        android:text="@string/doctorLogin" />
+    <!--    <Button-->
+    <!--        android:id="@+id/doctorLoginBtn"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@+id/adminLoginBtn"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:background="@drawable/button_bg_rounded_corners"-->
+    <!--        android:padding="15dp"-->
+    <!--        android:text="@string/doctorLogin" />-->
 
-    <Button
-        android:id="@+id/patientLoginBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/doctorLoginBtn"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/button_bg_rounded_corners"
-        android:padding="15dp"
-        android:text="@string/patientLogin" />
+    <!--    <Button-->
+    <!--        android:id="@+id/patientLoginBtn"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/doctorLoginBtn"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:background="@drawable/button_bg_rounded_corners"-->
+    <!--        android:padding="15dp"-->
+    <!--        android:text="@string/patientLogin" />-->
 
 </RelativeLayout>

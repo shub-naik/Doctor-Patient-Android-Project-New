@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 
 fun getToast(context: Context, message: String, duration: Int = Toast.LENGTH_LONG): Toast =
@@ -16,6 +17,14 @@ fun getSnackBar(layout: View, message: String, duration: Int = Snackbar.LENGTH_L
         message,
         duration
     )
+
+fun Context.getSupportActionBarView(title: String) {
+    val actionBarView = (this as AppCompatActivity).supportActionBar
+    actionBarView?.apply {
+        setDisplayHomeAsUpEnabled(true)
+        this.title = title
+    }
+}
 
 fun showSoftKeyboard(view: View) {
     if (view.requestFocus()) {

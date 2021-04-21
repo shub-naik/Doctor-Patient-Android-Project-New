@@ -5,6 +5,11 @@ const val AVAILABLE_DOCTORS_SEARCH_LIST_CONSTANT = "availableDoctorsSearchRecycl
 
 const val SELECTED_DOCTOR = "SelectedDoctor"
 
+// For ActionBar Titles
+const val ADMIN_LOGIN_TITLE = "Admin Login"
+const val PATIENT_BOOKING_HISTORY_TITLE = "Book History"
+const val PATIENT_BOOK_APPOINTMENT_TITLE = "Book A Appointment"
+
 const val PATIENT_CREDENTIAL = "PatientCredential"
 const val DOCTOR_CREDENTIAL = "DoctorCredential"
 

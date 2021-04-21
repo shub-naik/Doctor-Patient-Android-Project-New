@@ -56,4 +56,22 @@
         <item name="android:textColor">?attr/BoldTitleTxtViewColor</item>
     </style>
 
+    <!-- For Doctor Login -->
+    <style name="DoctorLoginTheme" parent="Theme.DoctorPatientAndroidAppNew">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!-- Patient Login SignUp -->
+    <style name="PatientLoginSignUpTheme" parent="DoctorLoginTheme" />
+
+
+    <style name="SplashScreenTheme" parent="Theme.DoctorPatientAndroidAppNew">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
 </resources>

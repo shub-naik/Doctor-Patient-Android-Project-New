@@ -77,8 +77,8 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
                 val l = filterResults.values
                 if (l != null)
                     availableDoctorFilterList = l as MutableList<Doctor>
-//                notifyDataSetChanged()
-                searchedAdapterData(availableDoctorFilterList)
+                notifyDataSetChanged()
+//                searchedAdapterData(availableDoctorFilterList)
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.shubham.doctorpatientandroidappnew
 
-import DOCTOR_CREDENTIAL
-import PATIENT_CREDENTIAL
+import ADMIN_LOGIN_TITLE
 import admin.ChooseRoleActivity
 import android.app.Dialog
 import android.app.ProgressDialog
@@ -20,13 +19,10 @@ import appDarkModeState
 import com.shubham.databasemodule.DataBase
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityMainBinding
 import com.shubham.doctorpatientandroidappnew.databinding.AdminLoginLayoutBinding
-import doctor.DoctorProfileActivity
-import doctorPatientCommon.DoctorPatientLoginActivity
+import doctorPatientCommon.DoctorLoginActivity
 import helperFunctions.getDarkModeSharedPreferences
-import helperFunctions.getDoctorSharedPreferences
-import helperFunctions.getPatientSharedPreferences
+import helperFunctions.getSupportActionBarView
 import helperFunctions.getToast
-import patient.PatientMainActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -42,24 +38,28 @@ class MainActivity : AppCompatActivity() {
             AdminLoginLayoutBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        // Checking Shared Preferences for Redirection to Respective Screens
-        // 1) For Patient
-        val patientSharedPreferences = getPatientSharedPreferences(this)
-        val patientCredential = patientSharedPreferences.getString(PATIENT_CREDENTIAL, null)
-        if (patientCredential != null) {
-            startActivity(Intent(this, PatientMainActivity::class.java))
-            finish()
-            return
-        }
 
-        // 2) For Doctor
-        val doctorSharedPreferences = getDoctorSharedPreferences(this)
-        val doctorCredential = doctorSharedPreferences.getString(DOCTOR_CREDENTIAL, null)
-        if (doctorCredential != null) {
-            startActivity(Intent(this, DoctorProfileActivity::class.java))
-            finish()
-            return
-        }
+        this.getSupportActionBarView(ADMIN_LOGIN_TITLE)
+
+
+//        // Checking Shared Preferences for Redirection to Respective Screens
+//        // 1) For Patient
+//        val patientSharedPreferences = getPatientSharedPreferences(this)
+//        val patientCredential = patientSharedPreferences.getString(PATIENT_CREDENTIAL, null)
+//        if (patientCredential != null) {
+//            startActivity(Intent(this, PatientMainActivity::class.java))
+//            finish()
+//            return
+//        }
+//
+//        // 2) For Doctor
+//        val doctorSharedPreferences = getDoctorSharedPreferences(this)
+//        val doctorCredential = doctorSharedPreferences.getString(DOCTOR_CREDENTIAL, null)
+//        if (doctorCredential != null) {
+//            startActivity(Intent(this, DoctorProfileActivity::class.java))
+//            finish()
+//            return
+//        }
 
         // Progress Dialog For login purposes
         progressDialog = ProgressDialog(this)
@@ -120,19 +120,19 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
         }
 
-        // Patient Login Button Click
-        binding.patientLoginBtn.setOnClickListener {
-            startActivityIntent("patient")
-        }
-
-        // Doctor Login Button Click
-        binding.doctorLoginBtn.setOnClickListener {
-            startActivityIntent("doctor")
-        }
+//        // Patient Login Button Click
+//        binding.patientLoginBtn.setOnClickListener {
+//            startActivityIntent("patient")
+//        }
+//
+//        // Doctor Login Button Click
+//        binding.doctorLoginBtn.setOnClickListener {
+//            startActivityIntent("doctor")
+//        }
     }
 
     private fun startActivityIntent(loginRoleType: String) {
-        val intent = Intent(this, DoctorPatientLoginActivity::class.java)
+        val intent = Intent(this, DoctorLoginActivity::class.java)
         intent.putExtra("LoginRoleType", loginRoleType)
         startActivity(intent)
     }
@@ -151,6 +151,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
             R.id.LightNightIconSwitch -> {
                 val darkModeSharedPref = getDarkModeSharedPreferences(this)
                 val editor = darkModeSharedPref.edit()

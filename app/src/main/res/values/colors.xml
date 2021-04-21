@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="controlActivated">#D60B0B</color>
+    <color name="controlActivated">@color/purple_500</color>
 
     <color name="cardBackground">#C1A1FA</color>
     <color name="videoCallBtnBackground">#C9B1F3</color>

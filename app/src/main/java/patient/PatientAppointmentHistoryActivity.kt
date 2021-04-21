@@ -1,15 +1,18 @@
 package patient
 
+import PATIENT_BOOKING_HISTORY_TITLE
 import PATIENT_CREDENTIAL
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.shubham.databasemodule.DataBase
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientAppointmentHistoryBinding
 import helperFunctions.getPatientSharedPreferences
+import helperFunctions.getSupportActionBarView
 import helperFunctions.getToast
 import models.Appointment
 import models.AppointmentDate
@@ -28,6 +31,8 @@ class PatientAppointmentHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPatientAppointmentHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        this.getSupportActionBarView(PATIENT_BOOKING_HISTORY_TITLE)
 
         val sharedPref = getPatientSharedPreferences(this)
         val patientCredential = sharedPref.getString(PATIENT_CREDENTIAL, null)
@@ -72,4 +77,14 @@ class PatientAppointmentHistoryActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun groupDataAccordingToDate(appointmentList: List<Appointment>): Map<String, List<Appointment>> =
         appointmentList.groupBy { it.appointmentDate.dateOfAppointment }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+
+        }
 }
