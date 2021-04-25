@@ -1,3 +1,5 @@
 package models
 
-class AppointmentDate(val dateOfAppointment: String)
+import java.time.LocalDate
+
+class AppointmentDate(val dateOfAppointment: LocalDate)

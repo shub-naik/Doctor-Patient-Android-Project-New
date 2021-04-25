@@ -85,7 +85,6 @@ class PatientSignupFragment : Fragment() {
                         val editor = sharedPreferences.edit()
                         editor.putString(PATIENT_CREDENTIAL, phone)
                         editor.apply()
-                        editor.commit()
                         startActivity(Intent(activity, PatientMainActivity::class.java))
                         requireActivity().finish()
                     }

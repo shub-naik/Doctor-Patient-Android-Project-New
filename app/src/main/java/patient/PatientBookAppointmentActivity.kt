@@ -31,7 +31,6 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
     private lateinit var adapter: AvailableDoctorTimingAdapter
     private lateinit var dateOfAppointmentObject: LocalDate
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPatientBookAppointmentBinding.inflate(layoutInflater)
@@ -98,7 +97,6 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val currentYear = calendar[Calendar.YEAR]

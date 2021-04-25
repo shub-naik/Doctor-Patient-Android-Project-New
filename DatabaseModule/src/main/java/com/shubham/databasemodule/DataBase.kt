@@ -1,7 +1,6 @@
 package com.shubham.databasemodule
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import exceptions.Exceptions
 import helperFunctions.getUid
 import models.*
@@ -130,14 +129,17 @@ class DataBase {
             return Pair("EmptyList", arrayListOf())
         }
 
-        @RequiresApi(Build.VERSION_CODES.N)
         fun saveAppointmentDetails(mapData: Map<String, Any>) {
             val patientAppointmentList =
-                appointmentMap.getOrDefault(mapData["patientCredentials"] as String, ArrayList())
+                if (appointmentMap.containsKey(mapData["patientCredentials"]))
+                    appointmentMap[mapData["patientCredentials"]]!!
+                else
+                    ArrayList()
+
+            if (patientAppointmentList.isEmpty()) {
+                appointmentMap[mapData["patientCredentials"] as String] = patientAppointmentList
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (patientAppointmentList.isEmpty()) {
-                    appointmentMap[mapData["patientCredentials"] as String] = patientAppointmentList
-                }
                 patientAppointmentList.add(
                     Appointment(
                         AppointmentDetails(
@@ -146,7 +148,7 @@ class DataBase {
                             mapData["selectedDate"] as LocalDate,
                             mapData["selectedTime"] as String
                         ),
-                        AppointmentDate(mapData["selectedDate"].toString())
+                        AppointmentDate(mapData["selectedDate"] as LocalDate)
                     )
                 )
             }

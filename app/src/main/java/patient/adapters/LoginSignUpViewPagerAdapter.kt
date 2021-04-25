@@ -9,7 +9,7 @@ import patient.PatientSignupFragment
 
 class LoginSignUpViewPagerAdapter(
     fragmentManager: FragmentManager
-) : FragmentPagerAdapter(fragmentManager) {
+) : FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private val tabTitles = arrayOf("Patient Login", "Patient SignUp")
 

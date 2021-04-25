@@ -2,15 +2,14 @@ package models
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.annotation.NonNull
 
 class Doctor(
-    @NonNull val doctorId: String,
-    @NonNull doctorUsername: String,
-    @NonNull doctorPhone: String,
-    @NonNull val doctorPassword: String,
-    @NonNull val doctorDegreeList: ArrayList<String>,
-    @NonNull val doctorAvailableTimingList: ArrayList<String>
+    val doctorId: String,
+    doctorUsername: String,
+    doctorPhone: String,
+    val doctorPassword: String,
+    val doctorDegreeList: ArrayList<String>,
+    val doctorAvailableTimingList: ArrayList<String>
 ) :
     Person(doctorUsername, doctorPhone), Parcelable {
     constructor(parcel: Parcel) : this(
@@ -25,12 +24,12 @@ class Doctor(
     override fun equals(other: Any?): Boolean {
         if (other is Doctor) {
             if (doctorId == other.doctorId && personName == other.personName && personPhone == other.personPhone && doctorPassword == other.doctorPassword
-//                && doctorDegreeList.containsAll(other.doctorDegreeList) && other.doctorDegreeList.containsAll(
-//                    doctorDegreeList
-//                )
-//                && doctorAvailableTimingList.containsAll(other.doctorAvailableTimingList) && other.doctorAvailableTimingList.containsAll(
-//                    doctorAvailableTimingList
-//                )
+                && doctorDegreeList.containsAll(other.doctorDegreeList) && other.doctorDegreeList.containsAll(
+                    doctorDegreeList
+                )
+                && doctorAvailableTimingList.containsAll(other.doctorAvailableTimingList) && other.doctorAvailableTimingList.containsAll(
+                    doctorAvailableTimingList
+                )
             )
                 return true
         }
@@ -48,6 +47,14 @@ class Doctor(
 
     override fun describeContents(): Int {
         return 0
+    }
+
+    override fun hashCode(): Int {
+        var result = doctorId.hashCode()
+        result = 31 * result + doctorPassword.hashCode()
+        result = 31 * result + doctorDegreeList.hashCode()
+        result = 31 * result + doctorAvailableTimingList.hashCode()
+        return result
     }
 
     companion object CREATOR : Parcelable.Creator<Doctor> {

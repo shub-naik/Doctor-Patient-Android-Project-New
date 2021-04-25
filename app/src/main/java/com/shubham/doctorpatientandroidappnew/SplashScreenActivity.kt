@@ -4,6 +4,7 @@ import DOCTOR_CREDENTIAL
 import PATIENT_CREDENTIAL
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import doctor.DoctorProfileActivity
 import helperFunctions.getDoctorSharedPreferences
@@ -40,13 +41,26 @@ class SplashScreenActivity : AppCompatActivity() {
                 finish()
             }
 
-            if (patientCredential == null && doctorCredential == null) {
-                startActivity(Intent(this, PatientLoginSignUpActivity::class.java))
-                finish()
+//            if (patientCredential == null && doctorCredential == null) {
+//                startActivity(Intent(this, PatientLoginSignUpActivity::class.java))
+//                finish()
+//            }
+
+            when {
+                patientCredential != null -> {
+                    startActivity(Intent(this, PatientMainActivity::class.java))
+                    finish()
+                }
+                doctorCredential != null -> {
+                    startActivity(Intent(this, DoctorProfileActivity::class.java))
+                    finish()
+                }
+                else -> {
+                    startActivity(Intent(this, PatientLoginSignUpActivity::class.java))
+                    finish()
+                }
             }
-
         }, 3, TimeUnit.SECONDS)
-
     }
 
     override fun onDestroy() {

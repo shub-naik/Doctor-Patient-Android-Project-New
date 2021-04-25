@@ -4,6 +4,7 @@ import PATIENT_CREDENTIAL
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ class PatientLoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeClickListeners()
+        Log.e("FragmentDes", "onViewCreated: Login Created")
     }
 
     private fun initializeClickListeners() {
@@ -78,7 +80,6 @@ class PatientLoginFragment : Fragment() {
                         val editor = sharedPreferences.edit()
                         editor.putString(PATIENT_CREDENTIAL, phone)
                         editor.apply()
-                        editor.commit()
                         startActivity(Intent(activity, PatientMainActivity::class.java))
                         requireActivity().finish()
                     }

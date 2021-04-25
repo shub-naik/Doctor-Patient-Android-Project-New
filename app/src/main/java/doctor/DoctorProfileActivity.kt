@@ -51,14 +51,13 @@ class DoctorProfileActivity : AppCompatActivity() {
         }
 
         binding.AddNewTimingBtn.setOnClickListener {
-            addDynamicView()
+            addAvailableDateTimeSlots()
         }
 
         binding.DoctorSaveProfileBtn.setOnClickListener {
             if (checkIfValidAndStoreData()) {
                 DataBase.updateDoctorTimingDetails(doctorCredential, timingList)
-                getToast(this, "Timing Details Updated Successfully").show()
-                finish()
+                getToast(this, "Available Timing Details Updated Successfully").show()
             } else
                 getToast(this, "All Time Picker Fields are Mandatory").show()
         }
@@ -87,8 +86,7 @@ class DoctorProfileActivity : AppCompatActivity() {
         return result
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun addDynamicView() {
+    private fun addAvailableDateTimeSlots() {
         val view = layoutInflater.inflate(
             R.layout.add_new_timing_layout,
             binding.DynamicDoctorProfileLinearLayout,
@@ -128,7 +126,6 @@ class DoctorProfileActivity : AppCompatActivity() {
         binding.DynamicDoctorProfileLinearLayout.removeView(view)
     }
 
-    // Options Menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.doctor_menu, menu)
         return true
@@ -142,7 +139,7 @@ class DoctorProfileActivity : AppCompatActivity() {
                     clear()
                     apply()
                 }
-                getToast(this, "Doctor Logout Selected").show()
+                getToast(this, "Doctor Logout Successfully").show()
                 startActivity(Intent(this, PatientLoginSignUpActivity::class.java))
                 finish()
                 true

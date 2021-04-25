@@ -32,7 +32,7 @@ class DoctorLoginActivity : AppCompatActivity() {
         val loadingDialog = LoadingDialog(this)
 
         // Request Focus For Phone Number Field Automatically
-        binding.DoctorLoginPhoneEt.isFocusableInTouchMode = true
+//        binding.DoctorLoginPhoneEt.isFocusableInTouchMode = true
         binding.DoctorLoginPhoneEt.requestFocus()
 
         // BackGround and Main Executor
@@ -67,7 +67,6 @@ class DoctorLoginActivity : AppCompatActivity() {
                         val editor = sharedPreferences.edit()
                         editor.putString(DOCTOR_CREDENTIAL, phone)
                         editor.apply()
-                        editor.commit()
                         startActivity(Intent(this, DoctorProfileActivity::class.java))
                         finish()
                     }
