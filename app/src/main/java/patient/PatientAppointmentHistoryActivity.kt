@@ -1,82 +1,39 @@
 package patient
 
-import PATIENT_BOOKING_HISTORY_TITLE
-import PATIENT_CREDENTIAL
-import android.annotation.SuppressLint
-import android.os.Build
+import PATIENT_BOOKING_DETAIL_TITLE
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.shubham.databasemodule.DataBase
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientAppointmentHistoryBinding
-import helperFunctions.getPatientSharedPreferences
 import helperFunctions.getSupportActionBarView
-import helperFunctions.getToast
-import models.Appointment
-import models.AppointmentDate
-import patient.adapters.AppointmentDateItem
-import patient.adapters.AppointmentDetailItem
-import patient.adapters.AppointmentHistoryAdapter
-import patient.adapters.AppointmentListItem
-
+import patient.adapters.AppointmentDetailViewPagerAdapter
 
 class PatientAppointmentHistoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPatientAppointmentHistoryBinding
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager
 
-    @SuppressLint("LongLogTag")
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPatientAppointmentHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        this.getSupportActionBarView(PATIENT_BOOKING_HISTORY_TITLE)
+        this.getSupportActionBarView(PATIENT_BOOKING_DETAIL_TITLE)
 
-        val sharedPref = getPatientSharedPreferences(this)
-        val patientCredential = sharedPref.getString(PATIENT_CREDENTIAL, null)
-        if (patientCredential == null) {
-            getToast(this, "Some Error Occurred !!!")
-            finish()
-            return
-        }
+        // View Pager for Past and Upcoming Details
+        viewPager = binding.PatientAppointmentDetailsViewPager
 
-        val appointmentDetails = DataBase.getAppointmentDetails(patientCredential)
-        if (appointmentDetails.first.equals("EmptyList", true)) {
-            getToast(this, "You Haven't done any appointment yet !!!").show()
-            finish()
-            return
-        }
+        tabLayout = binding.PatientAppointmentDetailsTabLayout
+        tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
-        val appointmentList = appointmentDetails.second
-        val appointHistoryRecyclerView = binding.AppointmentHistoryRecyclerView
+        val appointmentViewPagerAdapter = AppointmentDetailViewPagerAdapter(supportFragmentManager)
+        viewPager.adapter = appointmentViewPagerAdapter
 
-        // Group Appointment Data According To Date
-        val groupedHashMap = groupDataAccordingToDate(appointmentList)
-
-        // Sort the above HashMap into the arrayList for adapter.
-        val transformedAppointmentList = transformMapToSortedArrayList(groupedHashMap)
-
-        val adapter = AppointmentHistoryAdapter(transformedAppointmentList, this)
-        appointHistoryRecyclerView.adapter = adapter
-        val manager = LinearLayoutManager(this)
-        appointHistoryRecyclerView.layoutManager = manager
+        tabLayout.setupWithViewPager(viewPager)
+        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
     }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun transformMapToSortedArrayList(groupedHashMap: Map<String, List<Appointment>>): List<AppointmentListItem> {
-        val consolidatedList: ArrayList<AppointmentListItem> = ArrayList()
-        for ((dateAsAKey, value) in groupedHashMap.entries) {
-            consolidatedList.add(AppointmentDateItem(AppointmentDate(dateAsAKey)))
-            consolidatedList.addAll(value.run { map { AppointmentDetailItem(it.appointmentDetails) }.toList() })
-        }
-        return consolidatedList
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun groupDataAccordingToDate(appointmentList: List<Appointment>): Map<String, List<Appointment>> =
-        appointmentList.groupBy { it.appointmentDate.dateOfAppointment }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
         when (item.itemId) {
@@ -85,6 +42,5 @@ class PatientAppointmentHistoryActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
-
         }
 }

@@ -1,7 +1,5 @@
 <resources>
     <!-- Lorem Text -->
-    <string name="lorem_text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
-
     <string name="app_name">DoctorPatient Consultation</string>
 
     <string name="introduction_title">Doctor Patient Consultation</string>
@@ -67,13 +65,36 @@
     <string name="add_new_timing">Add New Time</string>
     <string name="select_time">Select Time</string>
     <string name="delete_this_item">Delete This Item</string>
-    <string name="select_time_using_add_new_button">Select Time Using `Add New Button +` :</string>
+    <string name="select_new_date_using_add_new_button">Select New Date Slot Using `Add New Button +` :</string>
     <string name="please_select_the_above_timePicker_or_delete_it">Please Select The Above TimePicker or Delete It</string>
     <string name="night_light_mode">Night-Light Mode</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="are_you_a_doctor">Are You A Doctor, Go To Doctor Login ?</string>
     <string name="are_you_a_admin">Are you a Admin ?</string>
     <string name="no_updated_timings_available_for_the_appointment_by_the_doctor">No Updated Timings Available For the Appointment by the Doctor</string>
+    <string name="doctor_degree_details">Doctor Degree Details :</string>
+    <string name="select_doctor_degree_from_available">Select Doctor Degree</string>
+    <string name="enter_the_year_of_expiration">Enter the Year of Expiration :</string>
+    <string name="select_date_of_doctor_degree_expiry">Date of Deg. Exp :</string>
+    <string name="from_timepicker">From TimePicker</string>
+    <string name="to_timepicker">To TimePicker</string>
+    <string name="slot_duration">Slot Duration:</string>
+    <string name="add_new_slot">Add New Slot</string>
+    <string name="get_all_appointments">Get All Appointments</string>
+    <string name="no_appointments_yet">No Appointments Are Available</string>
+
+    <!-- Patient/Doctor Menu String -->
+    <string name="logout">Logout</string>
+    <string name="view_profile">View/Edit Profile</string>
+    <string name="check_appointment_details">Check Appointment Details</string>
+    <string name="doctor_search">Search</string>
+
+    <!-- PlaceHolder Text String -->
+    <string name="doctor_name">Dr. %1$s</string>
+    <string name="date_time_of_appointment">%1$s - %2$s</string>
+    <string name="update_degree_details">Update Degree Details :</string>
+    <string name="select_type_of_degree">Select Type Of Degree:</string>
+    <string name="add_new_degree">Add New Degree</string>
+    <string name="update_timings">Update Timings</string>
+    <string name="doctor_username">Doctor Name :</string>
 </resources>

@@ -11,6 +11,8 @@ import com.shubham.doctorpatientandroidappnew.databinding.AvailableDoctorListIte
 import diffUtilsRecyclerView.AvailableDoctorDiffUtil
 import models.Doctor
 import patient.interfaces.AvailableDoctorItemInterface
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AvailableDoctorsAdapter(private val availableDoctorItemInterface: AvailableDoctorItemInterface) :
     RecyclerView.Adapter<AvailableDoctorsAdapter.ViewHolder>(), Filterable {
@@ -44,7 +46,8 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
         val availableDoctor: Doctor = availableDoctorFilterList[adapterPos]
 
         viewHolder.doctorUsernameTxtView.text = availableDoctor.personName
-        viewHolder.doctorDegreeTxtView.text = availableDoctor.doctorDegreeList.joinToString(",")
+        viewHolder.doctorDegreeTxtView.text =
+            availableDoctor.doctorDegreeList.joinToString(",") { it.certificationName }
 
         viewHolder.doctorVideoCallBtn.setOnClickListener {
             availableDoctorItemInterface.onItemClick(availableDoctor)
@@ -63,7 +66,12 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
                 else {
                     val filteredList: MutableList<Doctor> = ArrayList()
                     for (doctor in availableDoctorsList)
-                        if (doctor.personName.toLowerCase().contains(charString.toLowerCase()))
+                        if (doctor.personName.toLowerCase(Locale.ROOT).contains(
+                                charString.toLowerCase(
+                                    Locale.ROOT
+                                )
+                            )
+                        )
                             filteredList.add(doctor)
                     filteredList
                 }
@@ -76,9 +84,8 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
                 val l = filterResults.values
                 if (l != null)
-                    availableDoctorFilterList = l as MutableList<Doctor>
+                    availableDoctorFilterList = ArrayList((l as List<*>).filterIsInstance<Doctor>())
                 notifyDataSetChanged()
-//                searchedAdapterData(availableDoctorFilterList)
             }
         }
     }
@@ -91,16 +98,5 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
         val diffResults = DiffUtil.calculateDiff(availableDoctorDiffUtil)
         availableDoctorFilterList = this.availableDoctorsList
         diffResults.dispatchUpdatesTo(this)
-    }
-
-    fun searchedAdapterData(list: List<Doctor>) {
-        try {
-            val availableDoctorDiffUtil = AvailableDoctorDiffUtil(availableDoctorsList, list)
-            val diffResults = DiffUtil.calculateDiff(availableDoctorDiffUtil)
-            availableDoctorFilterList = list.toMutableList()
-            diffResults.dispatchUpdatesTo(this)
-        } catch (exception: IndexOutOfBoundsException) {
-
-        }
     }
 }

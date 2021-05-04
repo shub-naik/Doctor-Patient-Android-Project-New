@@ -49,7 +49,7 @@ class DoctorLoginActivity : AppCompatActivity() {
                 ).show()
                 showEtError(phone, password)
             } else {
-                loadingDialog.startLoadingDialog()
+                loadingDialog.startLoadingDialog(binding.SnackBarLinearLayout)
                 backgroundExecutor.schedule({
                     // Call Backend Method For Doctor Login Check
                     val check = DataBase.checkDoctorLogin(phone, password)

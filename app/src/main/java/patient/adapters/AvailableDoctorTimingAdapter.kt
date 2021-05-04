@@ -9,45 +9,51 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.shubham.doctorpatientandroidappnew.R
+import java.time.LocalTime
 
 class AvailableDoctorTimingAdapter(
-    private val context: Context,
-    private val timingList: List<String>
+    private val availableTimingList: List<LocalTime>
 ) :
     RecyclerView.Adapter<AvailableDoctorTimingAdapter.ViewHolder>() {
+
+    private lateinit var context: Context
     private var checkedPosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        if (!this::context.isInitialized)
+            context = parent.context
         val view =
             LayoutInflater.from(context)
                 .inflate(R.layout.available_doctor_timing_row_item, parent, false)
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = timingList.size
+    override fun getItemCount(): Int = availableTimingList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(timingList[position])
+        val pos = holder.adapterPosition
+        holder.bind(availableTimingList[pos])
     }
 
     inner class ViewHolder(listItemView: View) : RecyclerView.ViewHolder(listItemView) {
         private var textView: TextView = listItemView.findViewById(R.id.availableTimingTxtView)
         private var imageView: ImageView = listItemView.findViewById(R.id.selectedItemImgView)
 
-        fun bind(timing: String) {
+        fun bind(timing: LocalTime) {
             if (checkedPosition == -1) {
                 imageView.visibility = View.GONE
-                textView.setTextColor(ContextCompat.getColor(context,R.color.black))
+                textView.setTextColor(ContextCompat.getColor(context, R.color.black))
             } else {
                 if (checkedPosition == adapterPosition) {
                     imageView.visibility = View.VISIBLE
                     textView.setTextColor(ContextCompat.getColor(context, R.color.white))
                 } else {
                     imageView.visibility = View.GONE
-                    textView.setTextColor(ContextCompat.getColor(context,R.color.black))
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.black))
                 }
             }
-            textView.text = timing
+            textView.text = timing.toString()
+
             itemView.setOnClickListener {
                 imageView.visibility = View.VISIBLE
                 textView.setTextColor(ContextCompat.getColor(context, R.color.white))
@@ -59,10 +65,9 @@ class AvailableDoctorTimingAdapter(
         }
     }
 
-    fun getSelected(): String? {
+    fun getSelected(): LocalTime? {
         return if (checkedPosition != -1) {
-            timingList[checkedPosition]
+            availableTimingList[checkedPosition]
         } else null
     }
-
 }

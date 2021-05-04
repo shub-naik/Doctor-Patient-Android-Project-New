@@ -66,7 +66,7 @@ class PatientSignupFragment : Fragment() {
                 }
             } else {
                 val loadingDialog = LoadingDialog(requireActivity())
-                loadingDialog.startLoadingDialog()
+                loadingDialog.startLoadingDialog(binding.linearLayout1)
                 val check = addPatientDataToDatabase(name, phone, password, loadingDialog)
 
                 backgroundExecutor.schedule({
@@ -79,7 +79,6 @@ class PatientSignupFragment : Fragment() {
                             ).show()
                         }
                     else {
-                        Log.e("CheckValue", "initializeClickListeners: $check")
 //                         Save Data To Patient Shared Preferences
                         val sharedPreferences = getPatientSharedPreferences(requireActivity())
                         val editor = sharedPreferences.edit()

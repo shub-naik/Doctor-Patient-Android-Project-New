@@ -61,7 +61,7 @@ class PatientLoginFragment : Fragment() {
                 }
             } else {
                 val loadingDialog = LoadingDialog(requireActivity())
-                loadingDialog.startLoadingDialog()
+                loadingDialog.startLoadingDialog(binding.SnackBarLinearLayout)
                 backgroundExecutor.schedule({
                     // Call Backend Method For Patient Login Check
                     val check = DataBase.checkPatientLogin(phone, password)

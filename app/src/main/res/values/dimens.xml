@@ -7,4 +7,6 @@
     <dimen name="cardElevation">5dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="bold_title">16sp</dimen>
+
 </resources>

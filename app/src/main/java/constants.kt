@@ -7,8 +7,10 @@ const val SELECTED_DOCTOR = "SelectedDoctor"
 
 // For ActionBar Titles
 const val ADMIN_LOGIN_TITLE = "Admin Login"
-const val PATIENT_BOOKING_HISTORY_TITLE = "Book History"
+const val PATIENT_BOOKING_DETAIL_TITLE = "Booking Details"
 const val PATIENT_BOOK_APPOINTMENT_TITLE = "Book A Appointment"
+const val DATE_OF_APPOINTMENT_ERROR = "Please Select The Date Of Appointment"
+const val NON_AUTHORIZED_USER = "Non-Authorized User Found"
 
 const val PATIENT_CREDENTIAL = "PatientCredential"
 const val DOCTOR_CREDENTIAL = "DoctorCredential"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/AppointmentHistoryCardBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,7 +12,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/appointmentHistoryImgView"
+            android:id="@+id/appointmentTypeImgView"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_margin="12dp"
@@ -23,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/appointmentHistoryDoctorName"
+            android:id="@+id/appointmentDoctorName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -36,16 +35,14 @@
             android:textStyle="bold"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/appointmentHistoryImgView"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/lorem_text" />
+            app:layout_constraintStart_toEndOf="@+id/appointmentTypeImgView"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/appointmentHistoryTime"
+            android:id="@+id/appointmentDateTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginLeft="12dp"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
@@ -55,9 +52,8 @@
             android:textStyle=""
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/appointmentHistoryImgView"
-            app:layout_constraintTop_toBottomOf="@+id/appointmentHistoryDoctorName"
-            tools:text="@string/lorem_text" />
+            app:layout_constraintStart_toEndOf="@+id/appointmentTypeImgView"
+            app:layout_constraintTop_toBottomOf="@+id/appointmentDoctorName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

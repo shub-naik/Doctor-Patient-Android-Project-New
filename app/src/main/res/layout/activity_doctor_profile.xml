@@ -71,39 +71,71 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/select_time_using_add_new_button"
+            android:text="@string/update_degree_details"
             android:textColor="@color/purple_500"
-            android:textSize="18sp"
+            android:textSize="@dimen/bold_title"
             android:textStyle="bold" />
 
         <LinearLayout
-            android:id="@+id/DynamicDoctorProfileLinearLayout"
+            android:id="@+id/DoctorDegreeLinearLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-
-        <Button
-            android:id="@+id/AddNewTimingBtn"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/AddNewDegreeBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:drawableEnd="@drawable/ic_baseline_add_24"
+            android:text="@string/add_new_degree"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_baseline_add_24" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/UpdateDegreeDetailsBtn"
+            style="@style/ButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/update_degree_details" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/select_new_date_using_add_new_button"
+            android:textColor="@color/purple_500"
+            android:textSize="@dimen/bold_title"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/AddDateTimingSlotsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/AddNewDateTimeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
             android:text="@string/add_new_timing"
             android:textAllCaps="false"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            app:icon="@drawable/ic_baseline_add_24" />
 
-        <Button
-            android:id="@+id/DoctorSaveProfileBtn"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/UpdateTimingDetailBtn"
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:elevation="1dp"
-            android:text="@string/save_profile"
+            android:text="@string/update_timings"
             android:textAllCaps="false"
             android:textSize="15sp" />
     </LinearLayout>

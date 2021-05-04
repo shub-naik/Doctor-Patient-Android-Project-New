@@ -1,127 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/parentLayoutPadding">
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <TextView
+        android:id="@+id/roleHeadingTxtView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/parentLayoutPadding">
+        android:gravity="center_horizontal"
+        android:text="@string/doctor_signUp"
+        android:textColor="@color/black"
+        android:textSize="40sp" />
 
-        <LinearLayout
-            android:id="@+id/linearLayout1"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_name"
+        android:textColorHint="@color/black"
+        android:textCursorDrawable="@null"
+        app:boxStrokeColor="@color/black"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/RoleSignUpUsernameEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:imeOptions="actionDone"
+            android:textColor="@color/black" />
 
-            <TextView
-                android:id="@+id/roleHeadingTxtView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/doctor_signUp"
-                android:textColor="@color/black"
-                android:textSize="40sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_name"
-                android:textColorHint="@color/black"
-                android:textCursorDrawable="@null"
-                app:boxStrokeColor="@color/black"
-                app:errorEnabled="true">
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_password"
+        android:textColorHint="@color/black"
+        android:textCursorDrawable="@null"
+        app:boxStrokeColor="@color/black"
+        app:errorEnabled="true"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/black">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/RoleSignUpUsernameEt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:textColor="@color/black" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_password"
-                android:textColorHint="@color/black"
-                android:textCursorDrawable="@null"
-                app:boxStrokeColor="@color/black"
-                app:errorEnabled="true"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/black">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/RoleSignUpPasswordEt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_phone"
-                android:textColorHint="@color/black"
-                android:textCursorDrawable="@null"
-                app:boxStrokeColor="@color/black"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/RoleSignUpPhoneEt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:textColor="@color/black" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/RoleSignUpPasswordEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/code_et_hint"
-            android:textColorHint="@color/black"
-            android:textCursorDrawable="@null"
-            app:boxStrokeColor="@color/black">
+            android:textColor="@color/black" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/RoleSignUpCodeEt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:textColor="@color/white"
-                android:visibility="gone" />
-        </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/continueAndNextButton"
-            android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_phone"
+        android:textColorHint="@color/black"
+        android:textCursorDrawable="@null"
+        app:boxStrokeColor="@color/black"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/RoleSignUpPhoneEt"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_baseline_person_add_24"
-            android:drawableLeft="@drawable/ic_baseline_person_add_24"
-            android:padding="10dp"
-            android:text="@string/doctor_code_btn"
-            android:visibility="gone" />
+            android:inputType="phone"
+            android:textColor="@color/black" />
 
-        <Button
-            android:id="@+id/RoleSignUpBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_baseline_person_add_24"
-            android:drawableLeft="@drawable/ic_baseline_person_add_24"
-            android:padding="10dp"
-            android:text="@string/doctor_signUp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    </LinearLayout>
-</ScrollView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/doctor_degree_details" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <AutoCompleteTextView
+            android:id="@+id/AutoCompleteDegreeDropDown"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="none"
+            android:text="@string/select_doctor_degree_from_available"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/DoctorDegreeExpiryDateBtn"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/select_date_of_doctor_degree_expiry" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/RoleSignUpBtn"
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/doctor_signUp"
+        app:icon="@drawable/ic_baseline_person_add_24"
+        app:iconGravity="textStart" />
+</LinearLayout>
+

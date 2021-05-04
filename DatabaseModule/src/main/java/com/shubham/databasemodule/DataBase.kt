@@ -1,16 +1,17 @@
 package com.shubham.databasemodule
 
-import android.os.Build
 import exceptions.Exceptions
 import helperFunctions.getUid
 import models.*
 import java.time.LocalDate
-import kotlin.random.Random
+import java.time.LocalTime
 
 class DataBase {
     companion object {
-        private val dummyDoctorDegreeList =
+        val doctorDegreeList =
             listOf(
+                "Dentist",
+                "Surgeon",
                 "MBBS",
                 "MD(Res)",
                 "MD",
@@ -25,30 +26,6 @@ class DataBase {
                 "MS", "MSc", "MSurg", "DSurg", "DS"
             )
 
-//        private var counter = 1
-//        fun createDummyDocData() {
-//            for (i in 1..20) {
-//                registeredDoctorList.add(
-//                    Doctor(
-//                        "$i", "$counter", "$i", "$i",
-//                        getRandomDegreeList(),
-//                        ArrayList<String>()
-//                    )
-//                )
-//                counter++
-//            }
-//        }
-
-        // For Getting Random Degree to a Doctor
-        private fun getRandomDegreeList(): ArrayList<String> {
-            val degreeList = ArrayList<String>()
-            for (i in 1..5) {
-                val randomInt = Random.nextInt(0, dummyDoctorDegreeList.size)
-                degreeList.add(dummyDoctorDegreeList[randomInt])
-            }
-            return degreeList
-        }
-
         // Admin Login Check
         fun adminCheck(username: String, password: String) =
             username == "a" && password == "a"
@@ -57,46 +34,47 @@ class DataBase {
         private val registeredDoctorList = mutableListOf<Doctor>()
         fun getRegisteredDoctorList() = registeredDoctorList.toList()
 
-        private var initialIndex = 0
-        private const val partsSize = 10
-        fun getPartsOfRegisteredDoctorList(): List<Doctor> {
-            val l: List<Doctor>
-            if (initialIndex == registeredDoctorList.size)
-                return listOf()
-            if (initialIndex + partsSize > registeredDoctorList.size) {
-                // Partial BreakDown of the original list
-                l = registeredDoctorList.subList(initialIndex, registeredDoctorList.size)
-                initialIndex = registeredDoctorList.size
-            } else {
-                l = registeredDoctorList.subList(initialIndex, partsSize + initialIndex)
-                initialIndex += partsSize
-            }
-            return l
-        }
-
-        fun addDoctorToRegisteredDoctorList(dataMap: Map<String, String>) {
+        fun addDoctorToRegisteredDoctorList(dataMap: Map<String, Any>) {
             val docList =
                 registeredDoctorList.filter { it.personPhone == dataMap["DoctorPhone"] }.toList()
             if (docList.isNotEmpty())
                 throw Exceptions("Doctor Already Exists With This Phone Number - ${dataMap["DoctorPhone"]}")
+
             val doctor = Doctor(
                 getUid(),
-                dataMap["DoctorUsername"] ?: error("Username Required"),
-                dataMap["DoctorPhone"] ?: error("Phone Number Required"),
-                dataMap["DoctorPassword"] ?: error("Password Required"),
-                getRandomDegreeList(),
-                ArrayList()
+                dataMap["DoctorUsername"].toString(),
+                dataMap["DoctorPhone"].toString(),
+                dataMap["DoctorPassword"].toString(),
+                ArrayList((dataMap["DoctorDegreeList"] as ArrayList<*>).filterIsInstance<Certification>()),
+                HashMap()
             )
             registeredDoctorList.add(doctor)
         }
 
-        fun getDoctorWithCredentials(doctorCredentials: String) =
-            getRegisteredDoctorList().filter { doctorCredentials == it.personPhone }[0]
+        fun getDoctorWithCredentials(doctorCredentials: String): Doctor? =
+            try {
+                registeredDoctorList.filter { doctorCredentials == it.personPhone }[0]
+            } catch (exception: Exception) {
+                null
+            }
 
-        fun updateDoctorTimingDetails(doctorCredentials: String, timingList: ArrayList<String>) {
+        fun getPatientWithCredentials(patientCredential: String): Patient? {
+            val patientList = registeredPatientList.filter { patientCredential == it.personPhone }
+            if (patientList.isNotEmpty() && patientList.size == 1)
+                return patientList[0]
+            return null
+        }
+
+        fun updateDegreeDetails(doctor: Doctor, certificationList: ArrayList<Certification>) {
+            doctor.doctorDegreeList.addAll(certificationList)
+        }
+
+        fun updateDoctorTimingDetails(
+            doctorCredentials: String,
+            availableDateTimeMap: HashMap<LocalDate, ArrayList<AvailableTimingSlot>>
+        ) {
             val doctor = getDoctorWithCredentials(doctorCredentials)
-            doctor.doctorAvailableTimingList.clear()
-            doctor.doctorAvailableTimingList.addAll(timingList)
+            doctor?.doctorAvailableDateTimeMap?.putAll(availableDateTimeMap)
         }
 
         // For registering Patient
@@ -122,36 +100,89 @@ class DataBase {
         fun checkPatientLogin(phone: String, password: String) =
             registeredPatientList.filter { it.personPhone == phone && it.patientPassword == password }.size == 1
 
-        private val appointmentMap = mutableMapOf<String, ArrayList<Appointment>>()
-        fun getAppointmentDetails(patientCredential: String): Pair<String, List<Appointment>> {
-            if (appointmentMap[patientCredential] != null)
-                return Pair("Result", appointmentMap[patientCredential]!!.toList())
-            return Pair("EmptyList", arrayListOf())
+        private val appointmentList = ArrayList<Appointment>()
+        fun getAllAppointmentOnADate(doctor: Doctor, date: LocalDate) =
+            appointmentList.filter {
+                it.appointmentDetails.doctor.doctorId == doctor.doctorId && it.appointmentDetails.dateOfAppointment == date
+            }
+
+        private fun getCurrentDateTimePair(): Pair<LocalDate, LocalTime> {
+//            val dateFormat1 = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+//            val dateFormat2 = SimpleDateFormat("HH:mm", Locale.US)
+//            val date = Date()
+            val todayDateStr = LocalDate.now()
+            val todayTimeStr = LocalTime.now()
+
+            return Pair(todayDateStr, todayTimeStr)
         }
 
-        fun saveAppointmentDetails(mapData: Map<String, Any>) {
-            val patientAppointmentList =
-                if (appointmentMap.containsKey(mapData["patientCredentials"]))
-                    appointmentMap[mapData["patientCredentials"]]!!
-                else
-                    ArrayList()
+        fun getAllRespectiveAppointmentForPatient(
+            patientCredential: String,
+            pastOrUpcoming: Int // Past means 1 and Upcoming means any number other than 1
+        ): List<Appointment> {
+            val patient = getPatientWithCredentials(patientCredential)
 
-            if (patientAppointmentList.isEmpty()) {
-                appointmentMap[mapData["patientCredentials"] as String] = patientAppointmentList
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                patientAppointmentList.add(
-                    Appointment(
-                        AppointmentDetails(
-                            mapData["patientCredentials"] as String,
-                            mapData["selectedDoctor"] as Doctor,
-                            mapData["selectedDate"] as LocalDate,
-                            mapData["selectedTime"] as String
-                        ),
-                        AppointmentDate(mapData["selectedDate"] as LocalDate)
-                    )
+            if (patient != null) {
+                val value = getCurrentDateTimePair()
+                val todayDate = value.first
+                val currentTime = value.second
+                return if (pastOrUpcoming == 1) {
+                    appointmentList.filter {
+                        it.appointmentDetails.patient.patientId == patient.patientId
+                                &&
+                                (it.appointmentDetails.dateOfAppointment.isBefore(todayDate) ||
+                                        (it.appointmentDetails.dateOfAppointment.isEqual(todayDate) && it.appointmentDetails.timeOfAppointment.isBefore(
+                                            currentTime
+                                        )))
+                    }
+                } else {
+                    appointmentList.filter {
+                        it.appointmentDetails.patient.patientId == patient.patientId &&
+                                (it.appointmentDetails.dateOfAppointment.isAfter(todayDate) ||
+                                        (it.appointmentDetails.dateOfAppointment.isEqual(todayDate) && it.appointmentDetails.timeOfAppointment.isAfter(
+                                            currentTime
+                                        )))
+                    }
+                }
+            } else
+                return listOf()
+        }
+
+        private fun alreadyAppointmentBooked(appointment: Appointment): Boolean {
+            for (currentApp in appointmentList) {
+                val currentAppointmentDetails = currentApp.appointmentDetails
+                val checkerAppointmentDetails = appointment.appointmentDetails
+                if (currentAppointmentDetails.doctor.doctorId == checkerAppointmentDetails.doctor.doctorId &&
+                    currentAppointmentDetails.dateOfAppointment.toString() == checkerAppointmentDetails.dateOfAppointment.toString()
+                    && currentAppointmentDetails.timeOfAppointment.toString() == checkerAppointmentDetails.timeOfAppointment.toString()
                 )
+                    return true
             }
+            return false
         }
+
+        fun saveAppointmentDataForPatient(appointment: Appointment) =
+            if (!alreadyAppointmentBooked(appointment))
+                appointmentList.add(appointment)
+            else
+                false
     }
 }
+
+// Unused Code
+//private var initialIndex = 0
+//private const val partsSize = 10
+//fun getPartsOfRegisteredDoctorList(): List<Doctor> {
+//    val l: List<Doctor>
+//    if (initialIndex == DataBase.registeredDoctorList.size)
+//        return listOf()
+//    if (initialIndex + partsSize > DataBase.registeredDoctorList.size) {
+//        // Partial BreakDown of the original list
+//        l = DataBase.registeredDoctorList.subList(initialIndex, DataBase.registeredDoctorList.size)
+//        initialIndex = DataBase.registeredDoctorList.size
+//    } else {
+//        l = DataBase.registeredDoctorList.subList(initialIndex, partsSize + initialIndex)
+//        initialIndex += partsSize
+//    }
+//    return l
+//}

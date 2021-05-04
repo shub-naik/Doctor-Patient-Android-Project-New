@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/doctorUsernameTextTitle"
+                android:text="@string/doctor_username"
                 android:textColor="@color/purple_700"
                 android:textSize="20sp" />
 
@@ -44,15 +44,43 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/DateOfAppointmentBtn"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@color/purple_700"
-            android:text="@string/select_date_of_appointment"
-            android:textColor="@color/white"
-            tools:ignore="ButtonStyle" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/DateOfAppointmentBtn"
+                style="@style/ButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:text="@string/select_date_of_appointment"
+                android:textColor="@color/white"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="@+id/FutureDatesScrollView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.38" />
+
+            <HorizontalScrollView
+                android:id="@+id/FutureDatesScrollView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/DateOfAppointmentBtn"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.6">
+
+                <LinearLayout
+                    android:id="@+id/FutureDatesLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" />
+
+            </HorizontalScrollView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -75,9 +103,10 @@
             android:text="@string/no_updated_timings_available_for_the_appointment_by_the_doctor"
             android:visibility="gone" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/BookAppointmentBtnForPatient"
-            android:layout_width="match_parent"
+            style="@style/ButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"

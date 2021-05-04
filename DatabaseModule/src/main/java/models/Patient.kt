@@ -1,7 +1,7 @@
 package models
 
 class Patient(
-    private val patientId: String,
+    val patientId: String,
     patientName: String,
     patientPhone: String,
     val patientPassword: String

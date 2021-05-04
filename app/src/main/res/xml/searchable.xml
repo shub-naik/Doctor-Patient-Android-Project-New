@@ -4,5 +4,4 @@
     android:layout_height="wrap_content"
     android:imeOptions="actionSearch"
     android:label="@string/app_name"
-    android:hint="@string/lorem_text"
     android:queryHint="@string/patientSearchViewHint" />

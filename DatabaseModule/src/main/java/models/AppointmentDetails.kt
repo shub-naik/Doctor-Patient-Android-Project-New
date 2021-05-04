@@ -1,10 +1,11 @@
 package models
 
 import java.time.LocalDate
+import java.time.LocalTime
 
 data class AppointmentDetails(
-    val patient: String,
+    val patient: Patient,
     val doctor: Doctor,
     val dateOfAppointment: LocalDate,
-    val timeOfAppointment: String
+    val timeOfAppointment: LocalTime
 )
