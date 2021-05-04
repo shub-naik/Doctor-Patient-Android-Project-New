@@ -33,13 +33,6 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         binding = ActivityPatientMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState?.getParcelableArrayList<Doctor>(AVAILABLE_DOCTORS_LIST_CONSTANT) != null) {
-            availableDoctorsList.clear()
-            availableDoctorsList.addAll(
-                savedInstanceState.getParcelableArrayList<Doctor>(AVAILABLE_DOCTORS_LIST_CONSTANT)!!
-            )
-        }
-
         val availableDoctorsRecyclerView = binding.AvailableDoctorsRecyclerView
 
         if (DataBase.getRegisteredDoctorList().isNotEmpty()) {
@@ -52,14 +45,6 @@ class PatientMainActivity : AppCompatActivity(), AvailableDoctorItemInterface {
         availableDoctorsRecyclerView.adapter = adapter
         val manager = LinearLayoutManager(this)
         availableDoctorsRecyclerView.layoutManager = manager
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(
-            AVAILABLE_DOCTORS_LIST_CONSTANT,
-            availableDoctorsList
-        )
     }
 
     // Options Menu
