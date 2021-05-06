@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_appointments"
+        android:icon="@drawable/appointment_img"
+        android:title="@string/appointments" />
+
+    <item
+        android:id="@+id/nav_available_doctors"
+        android:icon="@drawable/ic_baseline_event_available_24"
+        android:title="@string/available_doctors" />
+
+</menu>

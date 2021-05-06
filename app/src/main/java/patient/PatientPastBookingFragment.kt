@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.shubham.databasemodule.DataBase
-import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.FragmentPatientPastBookingBinding
 import helperFunctions.getLinearLayoutManager
 import helperFunctions.getPatientSharedPreferences
@@ -24,7 +23,8 @@ class PatientPastBookingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_patient_past_booking, container, false)
+        val binding = FragmentPatientPastBookingBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,10 +40,11 @@ class PatientPastBookingFragment : Fragment() {
 
             if (list.isNotEmpty()) {
                 val adapter = PatientAppointmentAdapter(list, false)
-                recyclerView.adapter = adapter
                 val manager = requireActivity().getLinearLayoutManager()
                 recyclerView.layoutManager = manager
+                recyclerView.adapter = adapter
             } else {
+                recyclerView.visibility = View.GONE
                 binding.PatientPastAppointmentTxtView.visibility = View.VISIBLE
             }
         } else {

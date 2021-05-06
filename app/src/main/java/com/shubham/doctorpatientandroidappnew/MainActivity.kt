@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
 
         this.getSupportActionBarView(ADMIN_LOGIN_TITLE)
 
-
 //        // Checking Shared Preferences for Redirection to Respective Screens
 //        // 1) For Patient
 //        val patientSharedPreferences = getPatientSharedPreferences(this)
@@ -80,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 )
             )
             setLayout(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }

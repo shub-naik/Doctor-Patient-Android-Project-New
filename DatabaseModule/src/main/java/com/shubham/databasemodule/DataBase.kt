@@ -5,6 +5,10 @@ import helperFunctions.getUid
 import models.*
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.random.Random
 
 class DataBase {
     companion object {
@@ -25,6 +29,19 @@ class DataBase {
                 "MPhil",
                 "MS", "MSc", "MSurg", "DSurg", "DS"
             )
+
+        fun getRandomDegreeList(): ArrayList<Certification> {
+            val l = arrayListOf<Certification>()
+            for (i in 1..5) {
+                l.add(
+                    Certification(
+                        doctorDegreeList[Random.nextInt(doctorDegreeList.size)],
+                        Date()
+                    )
+                )
+            }
+            return l
+        }
 
         // Admin Login Check
         fun adminCheck(username: String, password: String) =

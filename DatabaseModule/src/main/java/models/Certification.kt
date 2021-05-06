@@ -6,7 +6,7 @@ import java.util.*
 
 data class Certification(
     val certificationName: String,
-    val certificationValidity: Date
+    val graduatedIn: Date
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString().toString(),
@@ -15,7 +15,7 @@ data class Certification(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(certificationName)
-        parcel.writeLong(certificationValidity.time)
+        parcel.writeLong(graduatedIn.time)
     }
 
     override fun describeContents(): Int {

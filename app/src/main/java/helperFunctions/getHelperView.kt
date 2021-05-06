@@ -31,10 +31,15 @@ fun getSnackBar(layout: View, message: String, duration: Int = Snackbar.LENGTH_L
         duration
     )
 
-fun Context.getSupportActionBarView(title: String): androidx.appcompat.app.ActionBar {
+fun Context.getSupportActionBarView(
+    title: String,
+    setHomeAsEnabled: Boolean = true
+): androidx.appcompat.app.ActionBar {
     val actionBarView = (this as AppCompatActivity).supportActionBar
     return actionBarView?.apply {
-        setDisplayHomeAsUpEnabled(true)
+        if (setHomeAsEnabled) {
+            setDisplayHomeAsUpEnabled(true)
+        }
         this.title = title
     }!!
 }

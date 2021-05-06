@@ -104,14 +104,14 @@ class RegisterRoleActivity : AppCompatActivity() {
         doctorPhone: String,
         doctorPassword: String,
         doctorDegree: String,
-        degreeExpiresIn: String
+        graduatedIn: String
     ) {
         progressDialog.hide()
         try {
             val degreeList = arrayListOf(
                 Certification(
                     doctorDegree,
-                    getDateObject(degreeExpiresIn)
+                    getDateObject(graduatedIn)
                 )
             )
 

@@ -90,6 +90,14 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
         }
     }
 
+    fun filteredDoctorsAdapterData(availableDoctorList: List<Doctor>) {
+        val availableDoctorDiffUtil =
+            AvailableDoctorDiffUtil(availableDoctorFilterList, availableDoctorList)
+        val diffResults = DiffUtil.calculateDiff(availableDoctorDiffUtil)
+        availableDoctorFilterList = availableDoctorsList
+        diffResults.dispatchUpdatesTo(this)
+    }
+
     // Recycler View Set Data
     fun setAvailableDoctorsAdapterData(availableDoctorList: List<Doctor>) {
         this.availableDoctorsList = availableDoctorList.toMutableList()

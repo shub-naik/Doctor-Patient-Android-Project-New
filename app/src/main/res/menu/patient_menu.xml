@@ -7,17 +7,23 @@
         android:title="@string/logout"
         app:showAsAction="never" />
 
-<!--    <item-->
-<!--        android:id="@+id/PatientProfileMenuItem"-->
-<!--        android:icon="@drawable/ic_baseline_person_add_24"-->
-<!--        android:iconTint="@color/black"-->
-<!--        android:title="@string/view_profile"-->
-<!--        app:showAsAction="never" />-->
+    <!--    <item-->
+    <!--        android:id="@+id/PatientProfileMenuItem"-->
+    <!--        android:icon="@drawable/ic_baseline_person_add_24"-->
+    <!--        android:iconTint="@color/black"-->
+    <!--        android:title="@string/view_profile"-->
+    <!--        app:showAsAction="never" />-->
+
+    <!--    <item-->
+    <!--        android:id="@+id/PatientAppointmentCheckMeuItem"-->
+    <!--        android:title="@string/check_appointment_details"-->
+    <!--        app:showAsAction="never" />-->
 
     <item
-        android:id="@+id/PatientAppointmentCheckMeuItem"
-        android:title="@string/check_appointment_details"
-        app:showAsAction="never" />
+        android:id="@+id/FilterDoctorMenuItem"
+        android:icon="@drawable/ic_baseline_filter_alt_24"
+        android:title="@string/apply_filter"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/searchIconMenu"
