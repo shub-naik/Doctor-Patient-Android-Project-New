@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="@dimen/parentLayoutPadding"
     tools:context="patient.PatientMainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -11,12 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ProgressBar
-        android:id="@+id/AvailableDoctorsRecyclerViewProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:theme="@style/ProgressBarColor"
+    <TextView
+        android:id="@+id/NoDoctorsAvailableTxtView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_doctors_available_for_the_provided_filter"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:visibility="gone" />
+
 </RelativeLayout>

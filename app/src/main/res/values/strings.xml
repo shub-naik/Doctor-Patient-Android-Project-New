@@ -71,7 +71,7 @@
 
     <string name="are_you_a_doctor">Are You A Doctor, Go To Doctor Login ?</string>
     <string name="are_you_a_admin">Are you a Admin ?</string>
-    <string name="no_updated_timings_available_for_the_appointment_by_the_doctor">No Updated Timings Available For the Appointment by the Doctor</string>
+    <string name="no_updated_timings_available_for_the_appointment_by_the_doctor">No Slots Available For Booking</string>
     <string name="doctor_degree_details">Doctor Degree Details :</string>
     <string name="select_doctor_degree_from_available">Select Doctor Degree</string>
     <string name="enter_the_year_of_expiration">Enter the Year of Expiration :</string>
@@ -102,4 +102,6 @@
     <string name="appointments">Appointments</string>
     <string name="clear_filter">Clear Filter</string>
     <string name="apply_filter">Apply Filter</string>
+    <string name="no_doctors_available_for_the_provided_filter">No Doctors Available For The Provided Query Filter</string>
+    <string name="no_doctors_available_currently">"No Doctor Are Available At This Moment"</string>
 </resources>

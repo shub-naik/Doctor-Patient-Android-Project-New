@@ -94,7 +94,7 @@ class AvailableDoctorsAdapter(private val availableDoctorItemInterface: Availabl
         val availableDoctorDiffUtil =
             AvailableDoctorDiffUtil(availableDoctorFilterList, availableDoctorList)
         val diffResults = DiffUtil.calculateDiff(availableDoctorDiffUtil)
-        availableDoctorFilterList = availableDoctorsList
+        availableDoctorFilterList = availableDoctorList.toMutableList()
         diffResults.dispatchUpdatesTo(this)
     }
 

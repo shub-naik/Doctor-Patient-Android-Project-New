@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -89,6 +90,8 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
         handleFutureDates()
     }
 
+    private var previousBtn: MaterialButton? = null
+
     private fun handleFutureDates() {
         val currentDate = LocalDate.now()
         for (i in 0..2) {
@@ -99,6 +102,22 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
             btn.setOnClickListener {
                 dateOfAppointment = nextDate
                 getAvailabilityOnADate(nextDate)
+
+                btn.setBackgroundColor(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.selected
+                    )
+                )
+                if (previousBtn != null) {
+                    (previousBtn as MaterialButton).setBackgroundColor(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.purple_500
+                        )
+                    )
+                }
+                previousBtn = btn
             }
             binding.FutureDatesLayout.addView(view.root)
         }

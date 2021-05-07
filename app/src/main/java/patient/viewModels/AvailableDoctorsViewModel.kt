@@ -6,25 +6,29 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.shubham.databasemodule.DataBase
 import models.Doctor
+import models.FilterModel
 
 class AvailableDoctorsViewModel : ViewModel() {
     private val availableDoctorsList = mutableListOf<Doctor>()
     private val availableDoctorsLiveData = MutableLiveData<MutableList<Doctor>>()
 
+    fun loadDegreeDetailsForAdapter() =
+        DataBase.doctorDegreeList.map { FilterModel(it) }.toList()
+
     fun getAllAvailableDoctorsList(): LiveData<MutableList<Doctor>> {
-//        availableDoctorsList.value = ArrayList(DataBase.getRegisteredDoctorList())
-        for (i in 1..20) {
-            availableDoctorsList.add(
-                Doctor(
-                    "$i",
-                    "$i",
-                    "$i",
-                    "$i",
-                    DataBase.getRandomDegreeList(),
-                    HashMap()
-                )
-            )
-        }
+        //        for (i in 1..20) {
+//            availableDoctorsList.add(
+//                Doctor(
+//                    "$i",
+//                    "$i",
+//                    "$i",
+//                    "$i",
+//                    DataBase.getRandomDegreeList(),
+//                    HashMap()
+//                )
+//            )
+//        }
+        availableDoctorsList.addAll(ArrayList(DataBase.getRegisteredDoctorList()))
         availableDoctorsLiveData.value = availableDoctorsList
         return availableDoctorsLiveData
     }

@@ -67,4 +67,8 @@ class PatientAppointmentDetailsFragment : Fragment() {
         requireActivity().getSupportActionBarView("Appointments", false)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("DetailsFragment", "onDestroy: 1")
+    }
 }

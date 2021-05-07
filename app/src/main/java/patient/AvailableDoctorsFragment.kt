@@ -14,16 +14,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.shubham.databasemodule.DataBase
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.AvailableDoctorsFragmentBinding
 import com.shubham.doctorpatientandroidappnew.databinding.DoctorFilterDialogBinding
-import helperFunctions.getLinearLayoutManager
-import helperFunctions.getPatientSharedPreferences
-import helperFunctions.getSupportActionBarView
-import helperFunctions.getToast
+import helperFunctions.*
 import models.Doctor
-import models.FilterModel
 import patient.adapters.AvailableDoctorsAdapter
 import patient.adapters.FilterDoctorAdapter
 import patient.interfaces.AvailableDoctorItemInterface
@@ -47,7 +42,7 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
     private val adapter: AvailableDoctorsAdapter by lazy { AvailableDoctorsAdapter(this) }
     private val filterAdapter: FilterDoctorAdapter by lazy {
         FilterDoctorAdapter(
-            loadDegreeDetailsForAdapter()
+            viewModel.loadDegreeDetailsForAdapter()
         )
     }
 
@@ -74,9 +69,6 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = AvailableDoctorsFragmentBinding.bind(view)
-
-        inflateFilterDoctorDialog()
-        initListeners()
     }
 
     private fun inflateFilterDoctorDialog() {
@@ -94,17 +86,46 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
                 )
             )
             setLayout(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
+        }
+        recyclerView = filterBinding.FilterDoctorRcyView
+        val layoutManager = requireActivity().getLinearLayoutManager()
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = filterAdapter
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.PatientLogoutMenuItem -> {
+                val sharedPref = getPatientSharedPreferences(requireActivity())
+                sharedPref.edit().apply {
+                    clear()
+                    apply()
+                }
+                getToast(requireActivity(), "User Logout Successfully").show()
+                startActivity(Intent(requireActivity(), PatientLoginSignUpActivity::class.java))
+                requireActivity().finish()
+                true
+            }
+            R.id.FilterDoctorMenuItem -> {
+                dialog.show()
+                true
+            }
+            else -> false
         }
     }
 
     private fun initListeners() {
         filterBinding.ApplyFilterBtn.setOnClickListener {
-            viewModel.filterAvailableDoctorData(listOf("Dentist", "MD", "Surgeon"))
+            viewModel.filterAvailableDoctorData(filterAdapter.getCheckedResult())
                 .observe(viewLifecycleOwner, Observer {
                     dialog.cancel()
+                    if (it.size <= 0)
+                        toggleViewState(3, 1)
+                    else
+                        toggleViewState(1, 3)
                     adapter.filteredDoctorsAdapterData(it)
                 })
         }
@@ -112,13 +133,15 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
         filterBinding.ClearFilterBtn.setOnClickListener {
             viewModel.restoreAvailableDoctorsList().observe(viewLifecycleOwner, Observer {
                 dialog.cancel()
+                if (it.size <= 0)
+                    toggleViewState(3, 1)
+                else
+                    toggleViewState(1, 3)
                 adapter.filteredDoctorsAdapterData(it)
+                filterAdapter.clearCheckedTextView()
             })
         }
     }
-
-    private fun loadDegreeDetailsForAdapter() =
-        DataBase.doctorDegreeList.map { FilterModel(it) }.toList()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -133,10 +156,23 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
                 binding.AvailableDoctorsRecyclerView.adapter = adapter
                 val manager = LinearLayoutManager(requireActivity())
                 binding.AvailableDoctorsRecyclerView.layoutManager = manager
+
+                toggleViewState(1, 3)
             } else {
-                getToast(requireActivity(), "No Doctors Are Available At this Moment").show()
+                toggleViewState(3, 1)
+                binding.NoDoctorsAvailableTxtView.text =
+                    getString(R.string.no_doctors_available_currently)
             }
         })
+
+        // Inflating Layout and Listeners
+        inflateFilterDoctorDialog()
+        initListeners()
+    }
+
+    private fun toggleViewState(rcyViewState: Int, txtViewState: Int) {
+        makeVisibilityToGivenState(binding.AvailableDoctorsRecyclerView, rcyViewState)
+        makeVisibilityToGivenState(binding.NoDoctorsAvailableTxtView, txtViewState)
     }
 
     override fun onItemClick(doctor: Doctor) {
@@ -187,47 +223,5 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
         })
 
         return super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.PatientLogoutMenuItem -> {
-                val sharedPref = getPatientSharedPreferences(requireActivity())
-                sharedPref.edit().apply {
-                    clear()
-                    apply()
-                }
-                getToast(requireActivity(), "User Logout Successfully").show()
-                startActivity(Intent(requireActivity(), PatientLoginSignUpActivity::class.java))
-                requireActivity().finish()
-                true
-            }
-            R.id.FilterDoctorMenuItem -> {
-//                dialog = Dialog(requireActivity())
-//                dialog.setContentView(R.layout.doctor_filter_dialog) // doubt
-//
-//                dialog.window?.apply {
-//                    attributes.windowAnimations = R.style.dialog_animation
-//
-//                    setBackgroundDrawable(
-//                        ContextCompat.getDrawable(
-//                            requireContext(),
-//                            R.drawable.dialog_background
-//                        )
-//                    )
-//                    setLayout(
-//                        ViewGroup.LayoutParams.WRAP_CONTENT,
-//                        ViewGroup.LayoutParams.WRAP_CONTENT
-//                    )
-//                }
-                recyclerView = filterBinding.FilterDoctorRcyView
-                val layoutManager = requireActivity().getLinearLayoutManager()
-                recyclerView.layoutManager = layoutManager
-                recyclerView.adapter = filterAdapter
-                dialog.show()
-                true
-            }
-            else -> false
-        }
     }
 }

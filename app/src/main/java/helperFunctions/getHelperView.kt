@@ -5,7 +5,9 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.view.Display
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.Toast
@@ -23,6 +25,15 @@ fun Context.getLinearLayoutManager() = LinearLayoutManager(this)
 
 fun getToast(context: Context, message: String, duration: Int = Toast.LENGTH_LONG): Toast =
     Toast.makeText(context, message, duration)
+
+// 1 means VISIBLE , 2 means INVISIBLE , number other than 1 and 2 means GONE
+fun makeVisibilityToGivenState(view: View, state: Int = 1) {
+    view.visibility = when (state) {
+        1 -> View.VISIBLE
+        2 -> View.INVISIBLE
+        else -> View.GONE
+    }
+}
 
 fun getSnackBar(layout: View, message: String, duration: Int = Snackbar.LENGTH_LONG): Snackbar =
     Snackbar.make(
