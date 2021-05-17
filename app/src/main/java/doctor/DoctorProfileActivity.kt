@@ -13,7 +13,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityDoctorProfileBinding
 import com.shubham.doctorpatientandroidappnew.databinding.AddDateTimeSlotLayoutBinding
@@ -35,7 +35,7 @@ class DoctorProfileActivity : AppCompatActivity() {
     private val dateTimeSlotMap = HashMap<LocalDate, ArrayList<AvailableTimingSlot>>()
     private var doctorCredential: String? = null
     private val certificationList = arrayListOf<Certification>()
-    private val degreeList = DataBase.doctorDegreeList
+    private val degreeList = Database.doctorDegreeList
 
     private lateinit var doctorDegreeList: ArrayList<Certification>
 
@@ -51,7 +51,7 @@ class DoctorProfileActivity : AppCompatActivity() {
         doctorCredential = sharedPref.getString(DOCTOR_CREDENTIAL, null)
 
         if (doctorCredential != null) {
-            val doctor = DataBase.getDoctorWithCredentials(doctorCredential as String)
+            val doctor = Database.getDoctorWithCredentials(doctorCredential as String)
             if (doctor != null) {
                 binding.DoctorProfileUsername.text = doctor.personName
                 binding.DoctorProfilePhoneNumber.text = doctor.personPhone
@@ -117,7 +117,7 @@ class DoctorProfileActivity : AppCompatActivity() {
                     else
                         getToast(this, "Doctor Degree Already Exists").show()
                 }
-                DataBase.updateDegreeDetails(doctor, certificationList)
+                Database.updateDegreeDetails(doctor, certificationList)
                 binding.DoctorDegreeLinearLayout.removeAllViews()
                 getToast(this, "Doctor Degree Updated Successfully").show()
             } else
@@ -174,7 +174,7 @@ class DoctorProfileActivity : AppCompatActivity() {
                 if (validateAndStoreData(count)) {
                     // Save Date Time Slot if all goes fine.
                     if (doctorCredential != null) {
-                        DataBase.updateDoctorTimingDetails(
+                        Database.updateDoctorTimingDetails(
                             doctorCredential.toString(),
                             dateTimeSlotMap
                         )

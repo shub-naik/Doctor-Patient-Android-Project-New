@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import appDarkModeState
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityMainBinding
 import com.shubham.doctorpatientandroidappnew.databinding.AdminLoginLayoutBinding
 import doctorPatientCommon.DoctorLoginActivity
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 progressDialog.show()
                 Handler().postDelayed({
-                    if (DataBase.adminCheck(username, password)) {
+                    if (Database.adminCheck(username, password)) {
                         dialog.cancel()
                         progressDialog.cancel()
                         val intent = Intent(this, ChooseRoleActivity::class.java)

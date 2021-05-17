@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import models.Doctor
 import models.FilterModel
 
@@ -13,10 +13,10 @@ class AvailableDoctorsViewModel : ViewModel() {
     private val availableDoctorsLiveData = MutableLiveData<MutableList<Doctor>>()
 
     fun loadDegreeDetailsForAdapter() =
-        DataBase.doctorDegreeList.map { FilterModel(it) }.toList()
+        Database.doctorDegreeList.map { FilterModel(it) }.toList()
 
     fun getAllAvailableDoctorsList(): LiveData<MutableList<Doctor>> {
-        availableDoctorsList.addAll(ArrayList(DataBase.getRegisteredDoctorList()))
+        availableDoctorsList.addAll(ArrayList(Database.getRegisteredDoctorList()))
         availableDoctorsLiveData.value = availableDoctorsList
         return availableDoctorsLiveData
     }

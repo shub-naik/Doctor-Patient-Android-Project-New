@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.databinding.FragmentPatientUpcomingBookingBinding
 import helperFunctions.getLinearLayoutManager
 import helperFunctions.getPatientSharedPreferences
@@ -34,7 +34,7 @@ class PatientUpcomingBookingFragment : Fragment() {
             getPatientSharedPreferences(requireActivity()).getString(PATIENT_CREDENTIAL, "")
         if (patCredential != null) {
             val recyclerView = binding.PatientUpcomingAppointmentRcyView
-            val list = DataBase.getAllRespectiveAppointmentForPatient(patCredential, 2)
+            val list = Database.getAllRespectiveAppointmentForPatient(patCredential, 2)
             if (list.isNotEmpty()) {
                 val adapter = PatientAppointmentAdapter(list, true)
                 val manager = requireActivity().getLinearLayoutManager()

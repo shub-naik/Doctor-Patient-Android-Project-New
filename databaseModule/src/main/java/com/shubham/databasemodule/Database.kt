@@ -10,7 +10,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.random.Random
 
-class DataBase {
+class Database {
     companion object {
         val doctorDegreeList =
             listOf(

@@ -61,7 +61,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     // Database Module
-    implementation project(':DatabaseModule')
+    implementation project(':databaseModule')
 
     // Circular ImageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'

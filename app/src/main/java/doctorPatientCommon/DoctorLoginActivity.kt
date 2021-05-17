@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityDoctorPatientLoginBinding
 import doctor.DoctorProfileActivity
@@ -52,7 +52,7 @@ class DoctorLoginActivity : AppCompatActivity() {
                 loadingDialog.startLoadingDialog(binding.SnackBarLinearLayout)
                 backgroundExecutor.schedule({
                     // Call Backend Method For Doctor Login Check
-                    val check = DataBase.checkDoctorLogin(phone, password)
+                    val check = Database.checkDoctorLogin(phone, password)
                     loadingDialog.stopLoadingDialog()
                     if (!check)
                         mainExecutor.execute {

@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityRegisterRoleBinding
 import exceptions.Exceptions
@@ -28,7 +28,7 @@ class RegisterRoleActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // For Doctor Degree DropDown
-        val degreeList = DataBase.doctorDegreeList
+        val degreeList = Database.doctorDegreeList
         val dropdownAdapter = ArrayAdapter(this, R.layout.doctor_degree_dropdown_item, degreeList)
         binding.AutoCompleteDegreeDropDown.setText(degreeList[0])
         binding.AutoCompleteDegreeDropDown.setAdapter(dropdownAdapter)
@@ -115,7 +115,7 @@ class RegisterRoleActivity : AppCompatActivity() {
                 )
             )
 
-            DataBase.addDoctorToRegisteredDoctorList(
+            Database.addDoctorToRegisteredDoctorList(
                 mapOf(
                     "DoctorUsername" to doctorUsername,
                     "DoctorPhone" to doctorPhone,

@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.FragmentPatientLoginBinding
 import doctorPatientCommon.dialogs.LoadingDialog
@@ -64,7 +64,7 @@ class PatientLoginFragment : Fragment() {
                 loadingDialog.startLoadingDialog(binding.SnackBarLinearLayout)
                 backgroundExecutor.schedule({
                     // Call Backend Method For Patient Login Check
-                    val check = DataBase.checkPatientLogin(phone, password)
+                    val check = Database.checkPatientLogin(phone, password)
                     loadingDialog.stopLoadingDialog()
 
                     if (!check)

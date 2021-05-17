@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.FragmentPatientSignupBinding
 import doctorPatientCommon.dialogs.LoadingDialog
@@ -101,7 +101,7 @@ class PatientSignupFragment : Fragment() {
         val activityContext = requireActivity()
 
         try {
-            return DataBase.addPatientToRegisteredList(
+            return Database.addPatientToRegisteredList(
                 mapOf(
                     "PatientUsername" to patientUsername,
                     "PatientPhone" to patientPhone,

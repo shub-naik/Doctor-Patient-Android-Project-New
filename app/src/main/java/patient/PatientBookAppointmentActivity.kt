@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
-import com.shubham.databasemodule.DataBase
+import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientBookAppointmentBinding
 import com.shubham.doctorpatientandroidappnew.databinding.FutureDateItemBinding
@@ -50,7 +50,7 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
         val sharedPreferences = getPatientSharedPreferences(this)
         val prefValue = sharedPreferences.getString(PATIENT_CREDENTIAL, "")
         if (!prefValue.isNullOrEmpty()) {
-            val pat = DataBase.getPatientWithCredentials(prefValue)
+            val pat = Database.getPatientWithCredentials(prefValue)
             if (pat != null)
                 patient = pat
             else
@@ -146,7 +146,7 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
 
             // availableTimeList will contain all time slots on that particular date, so i have to filter out those which are previously booked.
             val alreadyBookedOnADate =
-                DataBase.getAllAppointmentOnADate(selectedDoctor, selectedDate)
+                Database.getAllAppointmentOnADate(selectedDoctor, selectedDate)
             for (a in alreadyBookedOnADate) {
                 availableTimeList.remove(a.appointmentDetails.timeOfAppointment)
             }
@@ -193,7 +193,7 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
             if (this::adapter.isInitialized && this::availableTimeList.isInitialized && availableTimeList.size > 0) {
                 val timeSelected = adapter.getSelected()
                 if (timeSelected != null) {
-                    val checkStatus = DataBase.saveAppointmentDataForPatient(
+                    val checkStatus = Database.saveAppointmentDataForPatient(
                         Appointment(
                             AppointmentDetails(
                                 patient,
