@@ -16,18 +16,6 @@ class AvailableDoctorsViewModel : ViewModel() {
         DataBase.doctorDegreeList.map { FilterModel(it) }.toList()
 
     fun getAllAvailableDoctorsList(): LiveData<MutableList<Doctor>> {
-        //        for (i in 1..20) {
-//            availableDoctorsList.add(
-//                Doctor(
-//                    "$i",
-//                    "$i",
-//                    "$i",
-//                    "$i",
-//                    DataBase.getRandomDegreeList(),
-//                    HashMap()
-//                )
-//            )
-//        }
         availableDoctorsList.addAll(ArrayList(DataBase.getRegisteredDoctorList()))
         availableDoctorsLiveData.value = availableDoctorsList
         return availableDoctorsLiveData
@@ -47,3 +35,15 @@ class AvailableDoctorsViewModel : ViewModel() {
         return availableDoctorsLiveData
     }
 }
+//        for (i in 1..20) {
+//            availableDoctorsList.add(
+//                Doctor(
+//                    "$i",
+//                    "$i",
+//                    "$i",
+//                    "$i",
+//                    DataBase.getRandomDegreeList(),
+//                    HashMap()
+//                )
+//            )
+//        }

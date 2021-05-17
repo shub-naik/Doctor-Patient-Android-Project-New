@@ -139,7 +139,7 @@ class RegisterRoleActivity : AppCompatActivity() {
                 exception.message.toString()
             ).show()
             binding.RoleSignUpPhoneEt.error =
-                "User Already Exists With This Phone Number - $doctorPhone"
+                "Doctor Already Exists With This Phone Number - $doctorPhone"
         }
     }
 }

@@ -82,7 +82,7 @@ fun Context.getTimePickerDialog(timePickerView: MaterialButton, viewTitle: Strin
 }
 
 fun getDateObject(dateStr: String): Date {
-    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
     return formatter.parse(dateStr)!!
 }
 
