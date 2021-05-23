@@ -1,7 +1,9 @@
 package doctor
 
 import DOCTOR_CREDENTIAL
+import android.content.Context
 import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,6 +14,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import application.ApplicationClass
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.google.android.material.button.MaterialButton
 import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
@@ -19,10 +24,13 @@ import com.shubham.doctorpatientandroidappnew.databinding.ActivityDoctorProfileB
 import com.shubham.doctorpatientandroidappnew.databinding.AddDateTimeSlotLayoutBinding
 import com.shubham.doctorpatientandroidappnew.databinding.AddNewDegreeItemBinding
 import com.shubham.doctorpatientandroidappnew.databinding.AddTimeSlotBinding
+import entities.AvailabilityEnt
+import entities.CertificationEnt
+import entities.DoctorEnt
 import helperFunctions.*
+import kotlinx.coroutines.launch
 import models.AvailableTimingSlot
 import models.Certification
-import models.Doctor
 import patient.PatientLoginSignUpActivity
 import java.time.LocalDate
 import java.time.LocalTime
@@ -33,9 +41,11 @@ class DoctorProfileActivity : AppCompatActivity() {
     private lateinit var addNewDateTimeBtn: Button
     private lateinit var dateTimeLinearLayout: LinearLayout
     private val dateTimeSlotMap = HashMap<LocalDate, ArrayList<AvailableTimingSlot>>()
-    private var doctorCredential: String? = null
-    private val certificationList = arrayListOf<Certification>()
+    private var doctorCredential: Long = 0
+    private val certificationList = arrayListOf<CertificationEnt>()
     private val degreeList = Database.doctorDegreeList
+    private val context: Context by lazy { this }
+    private val doctorDao by lazy { (this.application as ApplicationClass).doctorDao }
 
     private lateinit var doctorDegreeList: ArrayList<Certification>
 
@@ -44,25 +54,28 @@ class DoctorProfileActivity : AppCompatActivity() {
         binding = ActivityDoctorProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Get the Doctor Id From the Shared Pref.
+        val sharedPref = getDoctorSharedPreferences(this)
+        doctorCredential = sharedPref.getLong(DOCTOR_CREDENTIAL, 0)
+
         dateTimeLinearLayout = binding.AddDateTimingSlotsLayout
         addNewDateTimeBtn = binding.AddNewDateTimeBtn
 
-        val sharedPref = getDoctorSharedPreferences(this)
-        doctorCredential = sharedPref.getString(DOCTOR_CREDENTIAL, null)
+        if (doctorCredential != 0.toLong()) {
+            val doctorEnt = doctorDao.getDoctorById(doctorCredential)
 
-        if (doctorCredential != null) {
-            val doctor = Database.getDoctorWithCredentials(doctorCredential as String)
-            if (doctor != null) {
-                binding.DoctorProfileUsername.text = doctor.personName
-                binding.DoctorProfilePhoneNumber.text = doctor.personPhone
+            doctorEnt.observe(this, androidx.lifecycle.Observer {
+                if (it.isNotEmpty()) {
+                    val doctor = it[0]
+                    binding.DoctorProfileUsername.text = doctor.doctorName
+                    binding.DoctorProfilePhoneNumber.text = doctor.doctorPhone
 
-                doctorDegreeList = doctor.doctorDegreeList
-
-                handleClickListeners(doctor)
-            } else
-                finishActivity("Some DataBase Error Occurred In the App")
+                    handleClickListeners(doctor)
+                } else
+                    finishActivity(getString(R.string.error_500))
+            })
         } else
-            finishActivity("Some Error Occurred In the App")
+            finishActivity(getString(R.string.app_error))
     }
 
     private fun finishActivity(message: String) {
@@ -75,55 +88,12 @@ class DoctorProfileActivity : AppCompatActivity() {
         binding.DoctorDegreeLinearLayout.removeView(view)
     }
 
-    private fun handleClickListeners(doctor: Doctor) {
-//        dateTimeLinearLayout.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-//
-//        }
+    private fun handleClickListeners(doctorEnt: DoctorEnt) {
+        handleDegreeClickListeners(doctorEnt)
+        handleTimingClickListeners()
+    }
 
-        // For Adding New Degree Details
-        binding.AddNewDegreeBtn.setOnClickListener {
-            val view = AddNewDegreeItemBinding.inflate(LayoutInflater.from(this))
-
-            view.DeleteDegreeBtn.setOnClickListener {
-                deleteDegreeView(view.root)
-            }
-
-            view.DoctorDegreeExpDateBtn.setOnClickListener {
-                getDatePickerDialog(view.DoctorDegreeExpDateBtn, "Select The Date of Exp")
-            }
-
-            // For Doctor Degree DropDown
-            val dropdownAdapter =
-                ArrayAdapter(this, R.layout.doctor_degree_dropdown_item, degreeList)
-            view.DoctorDegreeDrpDown.setText(degreeList[0])
-            view.DoctorDegreeDrpDown.setAdapter(dropdownAdapter)
-
-            binding.DoctorDegreeLinearLayout.addView(view.root)
-        }
-
-        // For Saving Doctor Degree Details
-        binding.UpdateDegreeDetailsBtn.setOnClickListener {
-            val parentLayout = binding.DoctorDegreeLinearLayout
-            val count = parentLayout.childCount
-            if (count > 0) {
-                for (i in 0 until count) {
-                    val view = parentLayout.getChildAt(i)
-                    val bind = AddNewDegreeItemBinding.bind(view)
-                    val degree = bind.DoctorDegreeDrpDown.text.toString()
-                    val date = getDateObject(bind.DoctorDegreeExpDateBtn.text.toString())
-                    val certification = Certification(degree, date)
-                    if (!alreadyExistsCheck(certification))
-                        certificationList.add(certification)
-                    else
-                        getToast(this, "Doctor Degree Already Exists").show()
-                }
-                Database.updateDegreeDetails(doctor, certificationList)
-                binding.DoctorDegreeLinearLayout.removeAllViews()
-                getToast(this, "Doctor Degree Updated Successfully").show()
-            } else
-                getToast(this, "No Degree Details Selected").show()
-        }
-
+    private fun handleTimingClickListeners() {
         // For Adding New Date Time Slot.
         binding.AddNewDateTimeBtn.setOnClickListener {
             val outerLayout = AddDateTimeSlotLayoutBinding.inflate(LayoutInflater.from(this))
@@ -172,26 +142,98 @@ class DoctorProfileActivity : AppCompatActivity() {
             val count = dateTimeLinearLayout.childCount
             if (count > 0) {
                 if (validateAndStoreData(count)) {
-                    // Save Date Time Slot if all goes fine.
-                    if (doctorCredential != null) {
-                        Database.updateDoctorTimingDetails(
-                            doctorCredential.toString(),
-                            dateTimeSlotMap
-                        )
-                        getToast(this, "Doctor Timings Slot Updated Successfully").show()
+                    if (doctorCredential > 0) {
+                        try {
+                            val l = dateTimeSlotMap.entries.map { entry ->
+                                entry.value.map {
+                                    AvailabilityEnt(
+                                        doctorCredential,
+                                        entry.key,
+                                        it.fromTime,
+                                        it.toTime,
+                                        it.slotDuration
+                                    )
+                                }
+                            }.flatten()
+                            lifecycleScope.launch {
+                                doctorDao.insertAvailabilities(l)
+                                getAlertDialog(
+                                    getString(R.string.date_time_slot_updated),
+                                    SweetAlertDialog.SUCCESS_TYPE
+                                )
+                            }
+                        } catch (exception: SQLiteConstraintException) {
+                            getAlertDialog(
+                                getString(R.string.error_500),
+                                SweetAlertDialog.ERROR_TYPE
+                            )
+                        }
                     }
-
                     dateTimeLinearLayout.removeAllViews()
                 } else
-                    getToast(this, "Some Error in Your Date Time Values").show()
+                    getToast(this, getString(R.string.date_time_selection_error)).show()
             } else
-                getToast(this, "All Date Time Fields are Required.").show()
+                getAlertDialog(getString(R.string.date_time_required), SweetAlertDialog.ERROR_TYPE)
         }
     }
 
-    private fun alreadyExistsCheck(certification: Certification): Boolean {
+    private fun handleDegreeClickListeners(doctor: DoctorEnt) {
+        binding.AddNewDegreeBtn.setOnClickListener {
+            val view = AddNewDegreeItemBinding.inflate(LayoutInflater.from(this))
+
+            view.DeleteDegreeBtn.setOnClickListener {
+                deleteDegreeView(view.root)
+            }
+
+            view.DoctorDegreeExpDateBtn.setOnClickListener {
+                getDatePickerDialog(
+                    view.DoctorDegreeExpDateBtn,
+                    getString(R.string.graduation_date)
+                )
+            }
+
+            // For Doctor Degree DropDown
+            val dropdownAdapter =
+                ArrayAdapter(this, R.layout.doctor_degree_dropdown_item, degreeList)
+            view.DoctorDegreeDrpDown.setText(degreeList[0])
+            view.DoctorDegreeDrpDown.setAdapter(dropdownAdapter)
+
+            binding.DoctorDegreeLinearLayout.addView(view.root)
+        }
+
+        // For Saving Doctor Degree Details
+        binding.UpdateDegreeDetailsBtn.setOnClickListener {
+            val parentLayout = binding.DoctorDegreeLinearLayout
+            val count = parentLayout.childCount
+            if (count > 0) {
+                for (i in 0 until count) {
+                    val view = parentLayout.getChildAt(i)
+                    val bind = AddNewDegreeItemBinding.bind(view)
+                    val degree = bind.DoctorDegreeDrpDown.text.toString()
+                    val date = getLocalDateObject(bind.DoctorDegreeExpDateBtn.text.toString())
+                    val certificationEnt = CertificationEnt(doctor.doctorId, degree, date)
+                    if (!alreadyExistsCheck(certificationEnt))
+                        certificationList.add(certificationEnt)
+                }
+                lifecycleScope.launch {
+                    doctorDao.insertCertifications(certificationList.toList())
+                    binding.DoctorDegreeLinearLayout.removeAllViews()
+                    getAlertDialog(
+                        getString(R.string.degree_details_saved),
+                        SweetAlertDialog.SUCCESS_TYPE
+                    )
+                }
+            } else
+                getAlertDialog(
+                    getString(R.string.degree_required),
+                    SweetAlertDialog.ERROR_TYPE
+                )
+        }
+    }
+
+    private fun alreadyExistsCheck(certificationEnt: CertificationEnt): Boolean {
         if (this::doctorDegreeList.isInitialized) {
-            doctorDegreeList.any { it.certificationName == certification.certificationName }
+            doctorDegreeList.any { it.certificationName == certificationEnt.certificationName }
         }
         return false
     }
@@ -232,7 +274,6 @@ class DoctorProfileActivity : AppCompatActivity() {
         return result
     }
 
-    //@TargetApi(Build.VERSION_CODES.O)     // To clear the doubt and edit it afterwards. It Can used be used with Date() Object
     private fun storeDataInMap(
         datePickerBtn: MaterialButton,
         fromTimePickerBtn: MaterialButton,
@@ -257,10 +298,9 @@ class DoctorProfileActivity : AppCompatActivity() {
                 if (checkInRange) {
                     getToast(this, "TimePicker Range Error").show()
                     return false
-                } else {
-                    dateTimeSlotMap[key]?.add(value)
                 }
             }
+            dateTimeSlotMap[key]?.add(value)
         } else {
             val list = arrayListOf<AvailableTimingSlot>()
             list.add(value)
@@ -296,7 +336,7 @@ class DoctorProfileActivity : AppCompatActivity() {
                     clear()
                     apply()
                 }
-                getToast(this, "Doctor Logout Successfully").show()
+                getToast(this, getString(R.string.roleLogout, "Doctor")).show()
                 startActivity(Intent(this, PatientLoginSignUpActivity::class.java))
                 finish()
                 true

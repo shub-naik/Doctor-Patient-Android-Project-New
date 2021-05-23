@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.AppointmentDetailRowItemBinding
-import models.Appointment
+import relations.PatientWithAppointments
 
 class PatientAppointmentAdapter(
-    private val appointmentList: List<Appointment>,
+    private val appointmentList: List<PatientWithAppointments>,
     private val pastOrUpcomingStatus: Boolean = false // Past means false and Upcoming means true
 ) :
     RecyclerView.Adapter<PatientAppointmentAdapter.ViewHolder>() {
@@ -47,13 +47,13 @@ class PatientAppointmentAdapter(
             holder.imgView.setImageResource(R.drawable.ic_baseline_history_24)
         holder.docNameTxtView.text = context.resources.getString(
             R.string.doctor_name,
-            currentAppointment.appointmentDetails.doctor.personName
+            currentAppointment.doctor.doctorName
         )
         holder.dateTimeTxtView.text =
             context.getString(
                 R.string.date_time_of_appointment,
-                currentAppointment.appointmentDetails.dateOfAppointment.toString(),
-                currentAppointment.appointmentDetails.timeOfAppointment.toString()
+                currentAppointment.dateTimePojo.dateOfAppointment,
+                currentAppointment.dateTimePojo.timeOfAppointment
             )
     }
 }

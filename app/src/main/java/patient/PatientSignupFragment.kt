@@ -2,36 +2,37 @@ package patient
 
 import PATIENT_CREDENTIAL
 import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.shubham.databasemodule.Database
+import androidx.lifecycle.lifecycleScope
+import application.ApplicationClass
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.FragmentPatientSignupBinding
 import doctorPatientCommon.dialogs.LoadingDialog
-import exceptions.Exceptions
+import entities.PatientEnt
 import helperFunctions.getPatientSharedPreferences
 import helperFunctions.getSnackBar
 import helperFunctions.getToast
-import java.util.concurrent.Executor
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 
 class PatientSignupFragment : Fragment() {
-    private lateinit var binding: FragmentPatientSignupBinding
+    private var _binding: FragmentPatientSignupBinding? = null
+    private val binding: FragmentPatientSignupBinding get() = _binding!!
     private lateinit var backgroundExecutor: ScheduledExecutorService
 
+    private val patientDao by lazy { (requireActivity().application as ApplicationClass).patientDao }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentPatientSignupBinding.inflate(inflater, container, false)
+        _binding = FragmentPatientSignupBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -40,8 +41,12 @@ class PatientSignupFragment : Fragment() {
         initializeClickListeners()
     }
 
+    companion object {
+        fun newInstance(): PatientSignupFragment = PatientSignupFragment()
+    }
+
+
     private fun initializeClickListeners() {
-        val mainExecutor: Executor = ContextCompat.getMainExecutor(requireActivity())
         backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
 
         binding.PatientSignUpBtn.setOnClickListener {
@@ -64,69 +69,48 @@ class PatientSignupFragment : Fragment() {
                     if (name.isEmpty())
                         binding.PatientSignUpNameEt.error = "Username Required"
                 }
-            } else {
-                val loadingDialog = LoadingDialog(requireActivity())
-                loadingDialog.startLoadingDialog(binding.linearLayout1)
-                val check = addPatientDataToDatabase(name, phone, password, loadingDialog)
-
-                backgroundExecutor.schedule({
-                    loadingDialog.stopLoadingDialog()
-                    if (!check)
-                        mainExecutor.execute {
-                            getSnackBar(
-                                binding.linearLayout1,
-                                "Invalid SignUp Found !!!"
-                            ).show()
-                        }
-                    else {
-//                         Save Data To Patient Shared Preferences
-                        val sharedPreferences = getPatientSharedPreferences(requireActivity())
-                        val editor = sharedPreferences.edit()
-                        editor.putString(PATIENT_CREDENTIAL, phone)
-                        editor.apply()
-                        startActivity(Intent(activity, PatientMainActivity::class.java))
-                        requireActivity().finish()
-                    }
-                }, 3, TimeUnit.SECONDS)
-            }
+            } else
+                addPatientDataToDatabase(name, phone, password)
         }
     }
 
     private fun addPatientDataToDatabase(
         patientUsername: String,
         patientPhone: String,
-        patientPassword: String,
-        loadingDialog: LoadingDialog
-    ): Boolean {
+        patientPassword: String
+    ) {
         val activityContext = requireActivity()
-
-        try {
-            return Database.addPatientToRegisteredList(
-                mapOf(
-                    "PatientUsername" to patientUsername,
-                    "PatientPhone" to patientPhone,
-                    "PatientPassword" to patientPassword
+        val loadingDialog = LoadingDialog(requireActivity())
+        loadingDialog.startLoadingDialog(binding.linearLayout1)
+        lifecycleScope.launch {
+            try {
+                val check = patientDao.insertPatient(
+                    PatientEnt(
+                        patientUsername,
+                        patientPhone,
+                        patientPassword
+                    )
                 )
-            )
-        } catch (exception: IllegalStateException) {
-            getToast(
-                activityContext,
-                exception.message.toString()
-            ).show()
-            loadingDialog.stopLoadingDialog()
-            Log.e("CheckValue", "addPatientDataToDatabase: 2 ")
-
-        } catch (exception: Exceptions) {
-            getToast(
-                activityContext,
-                exception.message.toString()
-            ).show()
-            loadingDialog.stopLoadingDialog()
-
-            binding.PatientSignUpPhoneEt.error =
-                "User Already Exists With This Phone Number - $patientPhone"
-            Log.e("CheckValue", "addPatientDataToDatabase: 3 ")
+                val sharedPreferences = getPatientSharedPreferences(activityContext)
+                val editor = sharedPreferences.edit()
+                editor.putLong(PATIENT_CREDENTIAL, check)
+                editor.apply()
+                startActivity(Intent(activity, PatientMainActivity::class.java))
+                loadingDialog.stopLoadingDialog()
+                activityContext.finish()
+            } catch (exception: SQLiteConstraintException) {
+                getToast(
+                    activityContext,
+                    exception.message.toString()
+                ).show()
+                loadingDialog.stopLoadingDialog()
+                binding.PatientSignUpPhoneEt.error = getString(R.string.patient_already_exists)
+            }
         }
-        return false
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

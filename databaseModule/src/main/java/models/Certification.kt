@@ -2,20 +2,20 @@ package models
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.util.*
+import java.time.LocalDate
 
 data class Certification(
     val certificationName: String,
-    val graduatedIn: Date
+    val graduatedIn: LocalDate
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString().toString(),
-        Date(parcel.readLong())
+        LocalDate.ofEpochDay(parcel.readLong())
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(certificationName)
-        parcel.writeLong(graduatedIn.time)
+        parcel.writeLong(graduatedIn.toEpochDay())
     }
 
     override fun describeContents(): Int {

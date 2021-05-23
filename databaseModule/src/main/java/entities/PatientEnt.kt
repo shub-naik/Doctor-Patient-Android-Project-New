@@ -5,13 +5,11 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(indices = [Index(value = ["patientPhone"], unique = true)])
-data class patientEntity(
+data class PatientEnt(
     val patientName: String,
-
     val patientPhone: String,
-
     val patientPassword: String
 ) {
     @PrimaryKey(autoGenerate = true)
-    private var patientId: Int = 0
+    var patientId: Long = 0L
 }

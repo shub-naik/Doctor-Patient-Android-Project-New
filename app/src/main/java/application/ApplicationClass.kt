@@ -3,14 +3,22 @@ package application
 import APPLICATION_TAG
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import appDarkModeState
+import com.shubham.databasemodule.Db
+import daos.DoctorDao
+import daos.PatientDao
 import helperFunctions.getDarkModeSharedPreferences
 
 class ApplicationClass : Application() {
     private val TAG = APPLICATION_TAG
+
+    private val context: Context by lazy { this }
+    val doctorDao: DoctorDao by lazy { Db.getInstance(context).doctorDao }
+    val patientDao: PatientDao by lazy { Db.getInstance(context).patientDao }
 
     override fun onCreate() {
         super.onCreate()

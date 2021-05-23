@@ -1,13 +1,12 @@
 package patient
 
 import AVAILABLE_DOCTORS_SEARCH_LIST_CONSTANT
-import SELECTED_DOCTOR
-import android.app.SearchManager
+import SELECTED_DOCTOR_ID
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientSearchResultBinding
 import helperFunctions.getToast
 import models.Doctor
@@ -29,18 +28,12 @@ class PatientSearchResultActivity : AppCompatActivity(), AvailableDoctorItemInte
 
         when (intent.action) {
             Intent.ACTION_SEARCH -> {
-                val query =
-                    intent.getStringExtra(SearchManager.QUERY) // Comment it for now , no use for now but can be used for search from remote database
                 val availableDoctorsList = intent.getParcelableArrayListExtra<Doctor>(
                     AVAILABLE_DOCTORS_SEARCH_LIST_CONSTANT
                 )!!
 
-                availableDoctorsList.map {
-                    Log.e("TpKing", "onCreate: ${it.personName}")
-                }
-
                 if (availableDoctorsList.isEmpty()) {
-                    getToast(this, "Not Able To Find For the Related Query").show()
+                    getToast(this, getString(R.string.not_found)).show()
                     finish()
                 }
                 val recyclerView = binding.SearchResultRecyclerView
@@ -49,7 +42,7 @@ class PatientSearchResultActivity : AppCompatActivity(), AvailableDoctorItemInte
                 recyclerView.adapter = availableDoctorsAdapter
             }
             else -> {
-                getToast(this, "Not the Intended Action To Perform").show()
+                getToast(this, getString(R.string.error_302)).show()
                 finish()
             }
         }
@@ -57,7 +50,7 @@ class PatientSearchResultActivity : AppCompatActivity(), AvailableDoctorItemInte
 
     override fun onItemClick(doctor: Doctor) {
         val intent = Intent(this, PatientBookAppointmentActivity::class.java)
-        intent.putExtra(SELECTED_DOCTOR, doctor)
+        intent.putExtra(SELECTED_DOCTOR_ID, doctor)
         startActivity(intent)
     }
 }

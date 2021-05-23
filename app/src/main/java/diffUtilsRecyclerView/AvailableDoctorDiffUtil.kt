@@ -1,6 +1,7 @@
 package diffUtilsRecyclerView
 
 import androidx.recyclerview.widget.DiffUtil
+import entities.DoctorEnt
 import models.Doctor
 
 class AvailableDoctorDiffUtil(

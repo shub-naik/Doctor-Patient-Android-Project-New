@@ -1,22 +1,28 @@
 package patient
 
 import NON_AUTHORIZED_USER
-import PATIENT_CREDENTIAL
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.shubham.databasemodule.Database
+import androidx.lifecycle.Observer
+import application.ApplicationClass
 import com.shubham.doctorpatientandroidappnew.databinding.FragmentPatientUpcomingBookingBinding
 import helperFunctions.getLinearLayoutManager
-import helperFunctions.getPatientSharedPreferences
+import helperFunctions.getPatientCredentials
 import helperFunctions.getToast
 import patient.adapters.PatientAppointmentAdapter
+import java.time.LocalDate
+import java.time.LocalTime
 
 class PatientUpcomingBookingFragment : Fragment() {
     private var _binding: FragmentPatientUpcomingBookingBinding? = null
     private val binding get() = _binding!!
+
+    private val patientDao by lazy { (requireActivity().application as ApplicationClass).patientDao }
+
+    private val TAG = "PatientUpcomingBookingF"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,20 +36,24 @@ class PatientUpcomingBookingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentPatientUpcomingBookingBinding.bind(view)
 
-        val patCredential =
-            getPatientSharedPreferences(requireActivity()).getString(PATIENT_CREDENTIAL, "")
-        if (patCredential != null) {
+        val patCredential = requireActivity().getPatientCredentials()
+        if (patCredential > 0) {
             val recyclerView = binding.PatientUpcomingAppointmentRcyView
-            val list = Database.getAllRespectiveAppointmentForPatient(patCredential, 2)
-            if (list.isNotEmpty()) {
-                val adapter = PatientAppointmentAdapter(list, true)
-                val manager = requireActivity().getLinearLayoutManager()
-                recyclerView.layoutManager = manager
-                recyclerView.adapter = adapter
-            } else {
-                recyclerView.visibility = View.GONE
-                binding.PatientUpcomingAppointmentTxtView.visibility = View.VISIBLE
-            }
+            val list = patientDao.getUpcomingAppointmentsForPatientById(
+                patCredential, LocalDate.now(),
+                LocalTime.now()
+            )
+            list.observe(viewLifecycleOwner, Observer {
+                if (it.isNotEmpty()) {
+                    val adapter = PatientAppointmentAdapter(it, true)
+                    val manager = requireActivity().getLinearLayoutManager()
+                    recyclerView.layoutManager = manager
+                    recyclerView.adapter = adapter
+                } else {
+                    recyclerView.visibility = View.GONE
+                    binding.PatientUpcomingAppointmentTxtView.visibility = View.VISIBLE
+                }
+            })
         } else {
             getToast(requireActivity(), NON_AUTHORIZED_USER).show()
             requireActivity().finish()

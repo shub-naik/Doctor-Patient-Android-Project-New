@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="parentLayoutPadding">2dp</dimen>
+    <dimen name="parentLayoutPadding">10dp</dimen>
     <dimen name="innerChildPadding">5dp</dimen>
     <dimen name="parentLayoutMargin">10dp</dimen>
 

@@ -2,33 +2,26 @@ package models
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.time.LocalDate
 
 class Doctor(
-    val doctorId: String,
+    val doctorId: Long,
     doctorUsername: String,
     doctorPhone: String,
-    val doctorPassword: String,
-    val doctorDegreeList: ArrayList<Certification>, // Edited from String To Certification Class
-    val doctorAvailableDateTimeMap: HashMap<LocalDate, ArrayList<AvailableTimingSlot>> // Edited from String to HashMap<LocalDate,ArrayList<AvailableTimingSlot>>()
+    val doctorDegreeList: List<Certification>
 ) :
     Person(doctorUsername, doctorPhone), Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readLong(),
         parcel.readString().toString(),
         parcel.readString().toString(),
-        parcel.readString().toString(),
-        parcel.readString().toString(),
-        parcel.createTypedArrayList(Certification.CREATOR)!!,
-        parcel.readSerializable() as HashMap<LocalDate, ArrayList<AvailableTimingSlot>>
+        parcel.createTypedArrayList(Certification.CREATOR)!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(doctorId)
+        parcel.writeLong(doctorId)
         parcel.writeString(super.personName)
         parcel.writeString(super.personPhone)
-        parcel.writeString(doctorPassword)
         parcel.writeTypedList(doctorDegreeList)
-        parcel.writeSerializable(doctorAvailableDateTimeMap)
     }
 
     override fun describeContents(): Int {
@@ -47,9 +40,7 @@ class Doctor(
 
     override fun hashCode(): Int {
         var result = doctorId.hashCode()
-        result = 31 * result + doctorPassword.hashCode()
         result = 31 * result + doctorDegreeList.hashCode()
-        result = 31 * result + doctorAvailableDateTimeMap.hashCode()
         return result
     }
 
@@ -60,9 +51,7 @@ class Doctor(
         other as Doctor
 
         if (doctorId != other.doctorId) return false
-        if (doctorPassword != other.doctorPassword) return false
         if (doctorDegreeList != other.doctorDegreeList) return false
-        if (doctorAvailableDateTimeMap != other.doctorAvailableDateTimeMap) return false
 
         return true
     }

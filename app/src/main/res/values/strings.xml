@@ -10,6 +10,7 @@
     <string name="adminLogin">Admin Login</string>
     <string name="doctorLogin">Doctor Login</string>
     <string name="patientLogin">Patient Login</string>
+    <string name="roleLogout">%1$s Logout Successfully</string>
 
     <!-- Admin Username Text String-->
     <string name="adminUsername">Enter Admin Username : </string>
@@ -58,6 +59,7 @@
     <string name="your_phone">Your Phone :</string>
     <string name="phone_value">Phone Value:</string>
     <string name="choose_the_time_of_appointment">Choose The Time Value From Below Available Timings :</string>
+    <string name="choose_the_date_of_appointment">Choose The Date Value From Above Available Dates :</string>
     <string name="book_appointment">Book An Appointment</string>
     <string name="select_date_of_appointment">Select Date Of Appointment</string>
     <string name="appointment_history_date">Appointment History Date</string>
@@ -104,4 +106,35 @@
     <string name="apply_filter">Apply Filter</string>
     <string name="no_doctors_available_for_the_provided_filter">No Doctors Available For The Provided Query Filter</string>
     <string name="no_doctors_available_currently">"No Doctor Are Available At This Moment"</string>
+
+    <string name="signup_data_saved">%1$s Data Saved Successfully</string>
+    <string name="degree_details_saved">Doctor Degree Details Updated Successfully</string>
+    <string name="doctor_already_exists">Doctor Already Exists With This Phone Number - %1$s</string>
+    <string name="patient_already_exists">User Already Exists With This Phone Number - %1$s</string>
+
+    <string name="invalid_login_found">Invalid Login Found !!!</string>
+    <string name="phone_required">Phone Number Required</string>
+    <string name="password_required">Password Required</string>
+    <string name="username_required">Username Required</string>
+    <string name="timing_selection_required">Time Must Be Selected</string>
+    <string name="date_time_required">All Date Time Fields are Required.</string>
+    <string name="degree_required">No Degree Details Selected</string>
+    <string name="date_time_selection_error">Some Error in Your Date Time Values</string>
+    <string name="unavailable_time">Unable To Book the Appointment Due to Unavailability</string>
+
+    <string name="date_time_slot_updated">Doctor Timings Slot Updated Successfully</string>
+    <string name="graduation_date">Date of Graduation</string>
+
+    <string name="not_found">Not Able To Find For the Related Query</string>
+    <string name="error_302">Not the Intended Action To Perform</string>
+    <string name="error_500">Some DataBase Error Occurred In the App</string>
+    <string name="app_error">Some Error Occurred In the App</string>
+
+    <string name="no_slots_available">No Slots Are There For The Selected Date - %1$s</string>
+
+    <string name="appointment_booked_status">Appointment is Booked With Id : %1$d</string>
+    <string name="Ok">OK</string>
+    <string name="error">Oops…</string>
+    <string name="success">Success</string>
+
 </resources>

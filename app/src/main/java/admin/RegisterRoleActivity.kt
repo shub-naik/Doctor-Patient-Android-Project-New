@@ -1,26 +1,27 @@
 package admin
 
-import android.app.ProgressDialog
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.button.MaterialButton
+import androidx.lifecycle.lifecycleScope
+import application.ApplicationClass
 import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityRegisterRoleBinding
-import exceptions.Exceptions
-import helperFunctions.getDateObject
+import entities.CertificationEnt
+import entities.DoctorEnt
 import helperFunctions.getDatePickerDialog
+import helperFunctions.getLocalDateObject
 import helperFunctions.getToast
 import helperFunctions.showSoftKeyboard
-import models.Certification
+import kotlinx.coroutines.launch
 
 class RegisterRoleActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterRoleBinding
-    private lateinit var progressDialog: ProgressDialog
+    private val doctorDao by lazy { (this.application as ApplicationClass).doctorDao }
+    private val context by lazy { this }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +33,6 @@ class RegisterRoleActivity : AppCompatActivity() {
         val dropdownAdapter = ArrayAdapter(this, R.layout.doctor_degree_dropdown_item, degreeList)
         binding.AutoCompleteDegreeDropDown.setText(degreeList[0])
         binding.AutoCompleteDegreeDropDown.setAdapter(dropdownAdapter)
-
-        progressDialog = ProgressDialog(this)
-        progressDialog.setTitle("Please Wait ...")
-        progressDialog.setMessage("Please Wait, Validating Data ...")
-        progressDialog.setCanceledOnTouchOutside(false)
 
         binding.roleHeadingTxtView.text = getString(R.string.doctor_signUp)
         binding.RoleSignUpBtn.text = getString(R.string.doctor_signUp)
@@ -52,12 +48,12 @@ class RegisterRoleActivity : AppCompatActivity() {
             val doctorPhone = binding.RoleSignUpPhoneEt.text.toString()
             val doctorPassword = binding.RoleSignUpPasswordEt.text.toString()
             val doctorDegreeName = binding.AutoCompleteDegreeDropDown.text.toString()
-            val degreeExpiryDate = binding.DoctorDegreeExpiryDateBtn.text.toString()
+            val graduatedIn = binding.DoctorDegreeExpiryDateBtn.text.toString()
 
             // string.xml variables
             val expString = resources.getString(R.string.select_date_of_doctor_degree_expiry)
 
-            if (doctorUsername.isEmpty() || doctorPassword.isEmpty() || doctorPhone.isEmpty() || doctorDegreeName.isEmpty() || degreeExpiryDate.equals(
+            if (doctorUsername.isEmpty() || doctorPassword.isEmpty() || doctorPhone.isEmpty() || doctorDegreeName.isEmpty() || graduatedIn.equals(
                     expString, true
                 )
             ) {
@@ -73,26 +69,22 @@ class RegisterRoleActivity : AppCompatActivity() {
                         "8 Characters Password is Mandatory"
                 if (doctorUsername.isEmpty())
                     binding.RoleSignUpUsernameEt.error = "Username is Mandatory"
-                if (degreeExpiryDate.equals(expString, false))
+                if (graduatedIn.equals(expString, false))
                     binding.DoctorDegreeExpiryDateBtn.error =
                         "Degree Expiry Date has to be selected"
             } else {
-                progressDialog.show()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    addDoctorDataToDatabase(
-                        doctorUsername,
-                        doctorPhone,
-                        doctorPassword,
-                        doctorDegreeName,
-                        degreeExpiryDate
-                    )
-                    progressDialog.hide()
-                }, 3000)
+                addDoctorDataToDatabase(
+                    doctorUsername,
+                    doctorPhone,
+                    doctorPassword,
+                    doctorDegreeName,
+                    graduatedIn
+                )
             }
         }
 
         binding.DoctorDegreeExpiryDateBtn.setOnClickListener {
-            this.getDatePickerDialog<MaterialButton>(
+            this.getDatePickerDialog(
                 binding.DoctorDegreeExpiryDateBtn,
                 getString(R.string.select_date_of_doctor_degree_expiry)
             )
@@ -106,40 +98,35 @@ class RegisterRoleActivity : AppCompatActivity() {
         doctorDegree: String,
         graduatedIn: String
     ) {
-        progressDialog.hide()
-        try {
-            val degreeList = arrayListOf(
-                Certification(
-                    doctorDegree,
-                    getDateObject(graduatedIn)
+        lifecycleScope.launch {
+            try {
+                val id =
+                    doctorDao.insertDoctor(DoctorEnt(doctorUsername, doctorPhone, doctorPassword))
+                doctorDao.insertCertifications(
+                    listOf(
+                        CertificationEnt(
+                            id,
+                            doctorDegree,
+                            getLocalDateObject(graduatedIn)
+                        )
+                    )
                 )
-            )
-
-            Database.addDoctorToRegisteredDoctorList(
-                mapOf(
-                    "DoctorUsername" to doctorUsername,
-                    "DoctorPhone" to doctorPhone,
-                    "DoctorPassword" to doctorPassword,
-                    "DoctorDegreeList" to degreeList
+                getToast(
+                    context,
+                    getString(R.string.signup_data_saved, "Doctor")
+                ).show()
+                finish()
+            } catch (exception: SQLiteConstraintException) {
+                val error = getString(
+                    R.string.doctor_already_exists,
+                    doctorPhone
                 )
-            )
-            getToast(
-                this,
-                "Doctor Data Saved Successfully"
-            ).show()
-            finish()
-        } catch (exception: IllegalStateException) {
-            getToast(
-                this,
-                exception.message.toString()
-            ).show()
-        } catch (exception: Exceptions) {
-            getToast(
-                this,
-                exception.message.toString()
-            ).show()
-            binding.RoleSignUpPhoneEt.error =
-                "Doctor Already Exists With This Phone Number - $doctorPhone"
+                getToast(
+                    context,
+                    error
+                ).show()
+                binding.RoleSignUpPhoneEt.error = error
+            }
         }
     }
 }

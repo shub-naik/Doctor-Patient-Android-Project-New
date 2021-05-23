@@ -11,66 +11,41 @@ import diffUtilsRecyclerView.FilterDoctorDiffUtil
 import models.FilterModel
 import java.util.*
 
-class FilterDoctorAdapter(private val filters: List<FilterModel>) :
+class FilterDoctorAdapter(
+    private val filters: MutableList<FilterModel>,
+    private val oldList: List<FilterModel>
+) :
     RecyclerView.Adapter<FilterDoctorAdapter.ViewHolder>() {
     private val checkedList = ArrayList<String>()
-    private val oldList = arrayListOf<FilterModel>()
-
-    fun getCheckedResult() = checkedList.toList()
 
     fun clearCheckedTextView() {
         checkedList.clear()
-        oldList.clear()
-        oldList.addAll(filters)
-        filters.mapIndexed { index, element ->
-            element.checkedStatus = false
-            notifyItemChanged(index)
-        }
-//        updateDataSet(oldList, filters)
-    }
-
-    inner class ViewHolder(listItemView: View) : RecyclerView.ViewHolder(listItemView) {
-        val binding = FilterDoctorItemBinding.bind(listItemView)
-        private val checkedTxtView: CheckedTextView = binding.checkedTextView
-
-//        override fun onClick(v: View) {
-//            val adapterPosition = adapterPosition
-//            if (!filters[adapterPosition].checkedStatus) {
-//                checkedTxtView.setCheckMarkDrawable(R.drawable.ic_baseline_check_circle_24)
-//                checkedList.add(checkedTxtView.text.toString())
-//                checkedTxtView.isChecked = true
-//                filters[adapterPosition].checkedStatus = true
-//            } else {
-//                checkedList.remove(checkedTxtView.text.toString())
-//                checkedTxtView.isChecked = false
-//                filters[adapterPosition].checkedStatus = false
-//            }
-//        }
-
-        fun bind(position: Int) {
-            checkedTxtView.isChecked = filters[position].checkedStatus
-            checkedTxtView.text = filters[position].strText
-            checkedTxtView.setOnClickListener {
-                val adapterPosition = adapterPosition
-                if (!filters[adapterPosition].checkedStatus) {
-                    checkedList.add(checkedTxtView.text.toString())
-                    checkedTxtView.isChecked = true
-                    filters[adapterPosition].checkedStatus = true
-                } else {
-                    checkedList.remove(checkedTxtView.text.toString())
-                    checkedTxtView.isChecked = false
-                    filters[adapterPosition].checkedStatus = false
-                }
+        // Method 1
+        filters.mapIndexed { index, filterModel ->
+            if (filterModel.checkedStatus) {
+                filterModel.checkedStatus = false
+                notifyItemChanged(index)
+            } else {
+                filterModel.checkedStatus = false
             }
         }
+
+        // Method 2
+        updateDataSet(filters, oldList)
     }
+
+    private fun updateDataSet(oldList: List<FilterModel>, newList: List<FilterModel>) {
+        val filterDoctorDiffUtil = FilterDoctorDiffUtil(oldList, newList)
+        val diffResults = DiffUtil.calculateDiff(filterDoctorDiffUtil)
+        filters.clear()
+        filters.addAll(newList)
+        diffResults.dispatchUpdatesTo(this)
+    }
+
+    fun getCheckedResult() = checkedList.toList()
 
     override fun getItemCount(): Int {
         return filters.size
-    }
-
-    override fun onBindViewHolder(holder: FilterDoctorAdapter.ViewHolder, position: Int) {
-        holder.bind(position)
     }
 
     override fun onCreateViewHolder(
@@ -81,9 +56,30 @@ class FilterDoctorAdapter(private val filters: List<FilterModel>) :
         return ViewHolder(binding.root)
     }
 
-//    private fun updateDataSet(oldList: List<FilterModel>, newList: List<FilterModel>) {
-//        val filterDoctorDiffUtil = FilterDoctorDiffUtil(oldList, newList)
-//        val diffResults = DiffUtil.calculateDiff(filterDoctorDiffUtil)
-//        diffResults.dispatchUpdatesTo(this)
-//    }
+    override fun onBindViewHolder(holder: FilterDoctorAdapter.ViewHolder, position: Int) {
+        holder.bind(holder.adapterPosition)
+    }
+
+    inner class ViewHolder(listItemView: View) : RecyclerView.ViewHolder(listItemView) {
+        val binding = FilterDoctorItemBinding.bind(listItemView)
+        private val checkedTxtView: CheckedTextView = binding.checkedTextView
+
+        fun bind(position: Int) {
+            val checkStatus = filters[position].checkedStatus
+            val checkText = filters[position].strText
+            checkedTxtView.isChecked = checkStatus
+            checkedTxtView.text = checkText
+            checkedTxtView.setOnClickListener {
+                if (!checkStatus) {
+                    checkedList.add(checkText)
+                    checkedTxtView.isChecked = true
+                    filters[position].checkedStatus = true
+                } else {
+                    checkedList.remove(checkText)
+                    checkedTxtView.isChecked = false
+                    filters[position].checkedStatus = false
+                }
+            }
+        }
+    }
 }

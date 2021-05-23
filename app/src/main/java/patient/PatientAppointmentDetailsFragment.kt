@@ -12,7 +12,7 @@ import com.google.android.material.tabs.TabLayout
 import com.shubham.doctorpatientandroidappnew.databinding.PatientAppointmentDetailsFragmentBinding
 import helperFunctions.getSupportActionBarView
 import patient.adapters.AppointmentDetailViewPagerAdapter
-import patient.viewModels.PatientAppointmentDetailsViewModel
+import patient.viewModels.BookingAppointmentViewModel
 
 class PatientAppointmentDetailsFragment : Fragment() {
     private var _binding: PatientAppointmentDetailsFragmentBinding? = null
@@ -25,7 +25,7 @@ class PatientAppointmentDetailsFragment : Fragment() {
         fun newInstance() = PatientAppointmentDetailsFragment()
     }
 
-    private lateinit var viewModel: PatientAppointmentDetailsViewModel
+    private lateinit var viewModel: BookingAppointmentViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,7 +62,7 @@ class PatientAppointmentDetailsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(PatientAppointmentDetailsViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(BookingAppointmentViewModel::class.java)
 
         requireActivity().getSupportActionBarView("Appointments", false)
     }

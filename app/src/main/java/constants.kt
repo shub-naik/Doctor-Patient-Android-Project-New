@@ -3,7 +3,10 @@ const val APPLICATION_TAG = "AppTag"
 const val AVAILABLE_DOCTORS_LIST_CONSTANT = "availableDoctorsRecyclerViewItemsList"
 const val AVAILABLE_DOCTORS_SEARCH_LIST_CONSTANT = "availableDoctorsSearchRecyclerViewItemsList"
 
-const val SELECTED_DOCTOR = "SelectedDoctor"
+const val SELECTED_DOCTOR_ID = "SelectedDoctor"
+const val SELECTED_DOCTOR_NAME = "SelectedDoctorName"
+
+const val SEARCH_QUERY = "query"
 
 // For ActionBar Titles
 const val ADMIN_LOGIN_TITLE = "Admin Login"

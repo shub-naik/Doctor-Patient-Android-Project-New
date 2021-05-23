@@ -30,18 +30,18 @@ class Database {
                 "MS", "MSc", "MSurg", "DSurg", "DS"
             )
 
-        fun getRandomDegreeList(): ArrayList<Certification> {
-            val l = arrayListOf<Certification>()
-            for (i in 1..5) {
-                l.add(
-                    Certification(
-                        doctorDegreeList[Random.nextInt(doctorDegreeList.size)],
-                        Date()
-                    )
-                )
-            }
-            return l
-        }
+//        fun getRandomDegreeList(): ArrayList<Certification> {
+//            val l = arrayListOf<Certification>()
+//            for (i in 1..5) {
+//                l.add(
+//                    Certification(
+//                        doctorDegreeList[Random.nextInt(doctorDegreeList.size)],
+//                        Date()
+//                    )
+//                )
+//            }
+//            return l
+//        }
 
         // Admin Login Check
         fun adminCheck(username: String, password: String) =
@@ -51,22 +51,22 @@ class Database {
         private val registeredDoctorList = mutableListOf<Doctor>()
         fun getRegisteredDoctorList() = registeredDoctorList.toList()
 
-        fun addDoctorToRegisteredDoctorList(dataMap: Map<String, Any>) {
-            val docList =
-                registeredDoctorList.filter { it.personPhone == dataMap["DoctorPhone"] }.toList()
-            if (docList.isNotEmpty())
-                throw Exceptions("Doctor Already Exists With This Phone Number - ${dataMap["DoctorPhone"]}")
-
-            val doctor = Doctor(
-                getUid(),
-                dataMap["DoctorUsername"].toString(),
-                dataMap["DoctorPhone"].toString(),
-                dataMap["DoctorPassword"].toString(),
-                ArrayList((dataMap["DoctorDegreeList"] as ArrayList<*>).filterIsInstance<Certification>()),
-                HashMap()
-            )
-            registeredDoctorList.add(doctor)
-        }
+//        fun addDoctorToRegisteredDoctorList(dataMap: Map<String, Any>) {
+//            val docList =
+//                registeredDoctorList.filter { it.personPhone == dataMap["DoctorPhone"] }.toList()
+//            if (docList.isNotEmpty())
+//                throw Exceptions("Doctor Already Exists With This Phone Number - ${dataMap["DoctorPhone"]}")
+//
+//            val doctor = Doctor(
+//                getUid(),
+//                dataMap["DoctorUsername"].toString(),
+//                dataMap["DoctorPhone"].toString(),
+//                dataMap["DoctorPassword"].toString(),
+//                ArrayList((dataMap["DoctorDegreeList"] as ArrayList<*>).filterIsInstance<Certification>()),
+//                HashMap()
+//            )
+//            registeredDoctorList.add(doctor)
+//        }
 
         fun getDoctorWithCredentials(doctorCredentials: String): Doctor? =
             try {
@@ -82,16 +82,16 @@ class Database {
             return null
         }
 
-        fun updateDegreeDetails(doctor: Doctor, certificationList: ArrayList<Certification>) {
-            doctor.doctorDegreeList.addAll(certificationList)
-        }
-
+//        fun updateDegreeDetails(doctor: Doctor, certificationList: ArrayList<Certification>) {
+//            doctor.doctorDegreeList.addAll(certificationList)
+//        }
+//
         fun updateDoctorTimingDetails(
             doctorCredentials: String,
             availableDateTimeMap: HashMap<LocalDate, ArrayList<AvailableTimingSlot>>
         ) {
             val doctor = getDoctorWithCredentials(doctorCredentials)
-            doctor?.doctorAvailableDateTimeMap?.putAll(availableDateTimeMap)
+//            doctor?.doctorAvailableDateTimeMap?.putAll(availableDateTimeMap)
         }
 
         // For registering Patient
@@ -111,8 +111,8 @@ class Database {
         }
 
         // Doctor - Patient Login Check
-        fun checkDoctorLogin(phone: String, password: String) =
-            registeredDoctorList.filter { it.personPhone == phone && it.doctorPassword == password }.size == 1
+//        fun checkDoctorLogin(phone: String, password: String) =
+//            registeredDoctorList.filter { it.personPhone == phone && it.doctorPassword == password }.size == 1
 
         fun checkPatientLogin(phone: String, password: String) =
             registeredPatientList.filter { it.personPhone == phone && it.patientPassword == password }.size == 1

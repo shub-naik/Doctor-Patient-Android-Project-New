@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 )
             )
             setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }

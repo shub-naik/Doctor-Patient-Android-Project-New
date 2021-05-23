@@ -1,49 +1,38 @@
 package patient.viewModels
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import application.ApplicationClass
 import com.shubham.databasemodule.Database
-import models.Doctor
 import models.FilterModel
+import relations.DoctorWithCertifications
 
-class AvailableDoctorsViewModel : ViewModel() {
-    private val availableDoctorsList = mutableListOf<Doctor>()
-    private val availableDoctorsLiveData = MutableLiveData<MutableList<Doctor>>()
+class AvailableDoctorsViewModel(application: Application) : AndroidViewModel(application) {
+    private val availableDoctorsList = mutableListOf<DoctorWithCertifications>()
+    private val availableDoctorsLiveData = MutableLiveData<List<DoctorWithCertifications>>()
+    private val availableDegrees by lazy { Database.doctorDegreeList }
+    private val patientDao = (application as ApplicationClass).patientDao
 
-    fun loadDegreeDetailsForAdapter() =
-        Database.doctorDegreeList.map { FilterModel(it) }.toList()
+    fun updateAvailableDoctorList(l: List<DoctorWithCertifications>) =
+        availableDoctorsList.addAll(l)
 
-    fun getAllAvailableDoctorsList(): LiveData<MutableList<Doctor>> {
-        availableDoctorsList.addAll(ArrayList(Database.getRegisteredDoctorList()))
+    fun loadDegreeDetailsForAdapter() = availableDegrees.map { FilterModel(it) }.toList()
+
+    fun getAllAvailableDoctorsList() = patientDao.getAllDoctorWithCertifications()
+
+    fun restoreAvailableDoctorsList(): LiveData<List<DoctorWithCertifications>> {
         availableDoctorsLiveData.value = availableDoctorsList
         return availableDoctorsLiveData
     }
 
-    fun restoreAvailableDoctorsList(): LiveData<MutableList<Doctor>> {
-        availableDoctorsLiveData.value = availableDoctorsList
-        return availableDoctorsLiveData
-    }
-
-    fun filterAvailableDoctorData(filters: List<String>): LiveData<MutableList<Doctor>> {
+    fun filterAvailableDoctorData(filters: List<String>): LiveData<List<DoctorWithCertifications>> {
         val l = availableDoctorsList.filter { it ->
-            it.doctorDegreeList.any { it.certificationName in filters }
-        }.toMutableList()
-        Log.e("VModel", "filterAvailableDoctorData: ${l.size}")
+            it.certifications.any { it.certificationName in filters }
+        }.toList()
         availableDoctorsLiveData.value = l
         return availableDoctorsLiveData
     }
 }
-//        for (i in 1..20) {
-//            availableDoctorsList.add(
-//                Doctor(
-//                    "$i",
-//                    "$i",
-//                    "$i",
-//                    "$i",
-//                    DataBase.getRandomDegreeList(),
-//                    HashMap()
-//                )
-//            )
-//        }

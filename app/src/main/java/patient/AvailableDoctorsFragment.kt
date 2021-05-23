@@ -1,7 +1,9 @@
 package patient
 
 import AVAILABLE_DOCTORS_SEARCH_LIST_CONSTANT
-import SELECTED_DOCTOR
+import SEARCH_QUERY
+import SELECTED_DOCTOR_ID
+import SELECTED_DOCTOR_NAME
 import android.app.Dialog
 import android.app.SearchManager
 import android.content.Context
@@ -12,17 +14,23 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.AvailableDoctorsFragmentBinding
 import com.shubham.doctorpatientandroidappnew.databinding.DoctorFilterDialogBinding
 import helperFunctions.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import models.Certification
 import models.Doctor
 import patient.adapters.AvailableDoctorsAdapter
 import patient.adapters.FilterDoctorAdapter
 import patient.interfaces.AvailableDoctorItemInterface
 import patient.viewModels.AvailableDoctorsViewModel
+import relations.DoctorWithCertifications
 
 class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
     private lateinit var viewModel: AvailableDoctorsViewModel
@@ -42,6 +50,7 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
     private val adapter: AvailableDoctorsAdapter by lazy { AvailableDoctorsAdapter(this) }
     private val filterAdapter: FilterDoctorAdapter by lazy {
         FilterDoctorAdapter(
+            viewModel.loadDegreeDetailsForAdapter().toMutableList(),
             viewModel.loadDegreeDetailsForAdapter()
         )
     }
@@ -72,7 +81,6 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
     }
 
     private fun inflateFilterDoctorDialog() {
-        // Inflating the Dialog View.
         dialog = Dialog(requireActivity())
         dialog.setContentView(filterBinding.root)
 
@@ -104,7 +112,7 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
                     clear()
                     apply()
                 }
-                getToast(requireActivity(), "User Logout Successfully").show()
+                getToast(requireActivity(), getString(R.string.roleLogout, "User")).show()
                 startActivity(Intent(requireActivity(), PatientLoginSignUpActivity::class.java))
                 requireActivity().finish()
                 true
@@ -122,25 +130,48 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
             viewModel.filterAvailableDoctorData(filterAdapter.getCheckedResult())
                 .observe(viewLifecycleOwner, Observer {
                     dialog.cancel()
-                    if (it.size <= 0)
+                    if (it.isEmpty())
                         toggleViewState(3, 1)
                     else
                         toggleViewState(1, 3)
-                    adapter.filteredDoctorsAdapterData(it)
+                    adapter.filteredDoctorsAdapterData(convertToDoctorEnt(it))
+                    adapter.filteredDoctorsAdapterData(convertToDoctorEnt(it))
                 })
         }
 
         filterBinding.ClearFilterBtn.setOnClickListener {
             viewModel.restoreAvailableDoctorsList().observe(viewLifecycleOwner, Observer {
                 dialog.cancel()
-                if (it.size <= 0)
+                filterAdapter.clearCheckedTextView()
+                if (it.isEmpty())
                     toggleViewState(3, 1)
                 else
                     toggleViewState(1, 3)
-                adapter.filteredDoctorsAdapterData(it)
-                filterAdapter.clearCheckedTextView()
+                adapter.filteredDoctorsAdapterData(convertToDoctorEnt(it))
             })
         }
+    }
+
+    private fun convertToDoctorEnt(docWithCerts: List<DoctorWithCertifications>): List<Doctor> {
+        val l = mutableListOf<Doctor>()
+        docWithCerts.forEach { it ->
+            val doctor = it.doctor
+            val certificationsEnt = it.certifications
+            val certifications = certificationsEnt.map {
+                Certification(
+                    it.certificationName,
+                    it.graduationDate
+                )
+            }
+            val d = Doctor(
+                doctor.doctorId,
+                doctor.doctorName,
+                doctor.doctorPhone,
+                certifications
+            )
+            l.add(d)
+        }
+        return l
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -151,14 +182,7 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
         viewModel = ViewModelProvider(this).get(AvailableDoctorsViewModel::class.java)
 
         viewModel.getAllAvailableDoctorsList().observe(viewLifecycleOwner, Observer {
-            if (it != null && it.size > 0) {
-                adapter.setAvailableDoctorsAdapterData(it)
-                binding.AvailableDoctorsRecyclerView.adapter = adapter
-                val manager = LinearLayoutManager(requireActivity())
-                binding.AvailableDoctorsRecyclerView.layoutManager = manager
-
-                toggleViewState(1, 3)
-            } else {
+            if (it != null && it.isNotEmpty()) organizeTheAvailableDocList(it) else {
                 toggleViewState(3, 1)
                 binding.NoDoctorsAvailableTxtView.text =
                     getString(R.string.no_doctors_available_currently)
@@ -170,6 +194,38 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
         initListeners()
     }
 
+    private fun organizeTheAvailableDocList(list: List<DoctorWithCertifications>) {
+        lifecycleScope.launch {
+            viewModel.updateAvailableDoctorList(list)
+            val availableDoctors = mutableListOf<Doctor>()
+            withContext(Dispatchers.Default) {
+                list.forEach { it ->
+                    val doctor = it.doctor
+                    val certificationsEnt = it.certifications
+                    val certifications = certificationsEnt.map {
+                        Certification(
+                            it.certificationName,
+                            it.graduationDate
+                        )
+                    }
+                    val d = Doctor(
+                        doctor.doctorId,
+                        doctor.doctorName,
+                        doctor.doctorPhone,
+                        certifications
+                    )
+                    availableDoctors.add(d)
+                }
+            }
+
+            adapter.setAvailableDoctorsAdapterData(availableDoctors)
+            binding.AvailableDoctorsRecyclerView.adapter = adapter
+            val manager = LinearLayoutManager(requireActivity())
+            binding.AvailableDoctorsRecyclerView.layoutManager = manager
+            toggleViewState(1, 3)
+        }
+    }
+
     private fun toggleViewState(rcyViewState: Int, txtViewState: Int) {
         makeVisibilityToGivenState(binding.AvailableDoctorsRecyclerView, rcyViewState)
         makeVisibilityToGivenState(binding.NoDoctorsAvailableTxtView, txtViewState)
@@ -178,7 +234,8 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
     override fun onItemClick(doctor: Doctor) {
         searchIconItem.collapseActionView()
         val intent = Intent(context, PatientBookAppointmentActivity::class.java)
-        intent.putExtra(SELECTED_DOCTOR, doctor)
+        intent.putExtra(SELECTED_DOCTOR_ID, doctor.doctorId)
+        intent.putExtra(SELECTED_DOCTOR_NAME, doctor.personName)
         startActivity(intent)
     }
 
@@ -207,7 +264,7 @@ class AvailableDoctorsFragment : Fragment(), AvailableDoctorItemInterface {
                     PatientSearchResultActivity::class.java
                 )
                 intent.action = Intent.ACTION_SEARCH
-                intent.putExtra("query", query)
+                intent.putExtra(SEARCH_QUERY, query)
                 intent.putParcelableArrayListExtra(
                     AVAILABLE_DOCTORS_SEARCH_LIST_CONSTANT,
                     ArrayList<Doctor>(resultData)

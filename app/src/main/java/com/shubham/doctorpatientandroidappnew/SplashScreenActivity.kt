@@ -1,14 +1,11 @@
 package com.shubham.doctorpatientandroidappnew
 
-import DOCTOR_CREDENTIAL
-import PATIENT_CREDENTIAL
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import doctor.DoctorProfileActivity
-import helperFunctions.getDoctorSharedPreferences
-import helperFunctions.getPatientSharedPreferences
+import helperFunctions.getDoctorCredentials
+import helperFunctions.getPatientCredentials
 import patient.PatientLoginSignUpActivity
 import patient.PatientMainActivity
 import java.util.concurrent.Executors
@@ -25,19 +22,17 @@ class SplashScreenActivity : AppCompatActivity() {
         backgroundExecutor = Executors.newSingleThreadScheduledExecutor()
         backgroundExecutor.schedule({
             // 1) For Patient
-            val patientSharedPreferences = getPatientSharedPreferences(this)
-            val patientCredential = patientSharedPreferences.getString(PATIENT_CREDENTIAL, null)
+            val patientCredential = this.getPatientCredentials()
 
             // 2) For Doctor
-            val doctorSharedPreferences = getDoctorSharedPreferences(this)
-            val doctorCredential = doctorSharedPreferences.getString(DOCTOR_CREDENTIAL, null)
+            val doctorCredential = this.getDoctorCredentials()
 
             when {
-                patientCredential != null -> {
+                patientCredential != 0.toLong() -> {
                     startActivity(Intent(this, PatientMainActivity::class.java))
                     finish()
                 }
-                doctorCredential != null -> {
+                doctorCredential != 0.toLong() -> {
                     startActivity(Intent(this, DoctorProfileActivity::class.java))
                     finish()
                 }

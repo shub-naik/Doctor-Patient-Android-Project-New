@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
+import application.ApplicationClass
 import com.google.android.material.tabs.TabLayout
 import com.shubham.doctorpatientandroidappnew.MainActivity
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientLoginSignUpBinding
@@ -27,13 +28,12 @@ class PatientLoginSignUpActivity : AppCompatActivity() {
         tabLayout = binding.PatientLoginSignUpTabLayout
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
-        val loginSignUpViewPagerAdapter: LoginSignUpViewPagerAdapter =
+        val loginSignUpViewPagerAdapter =
             LoginSignUpViewPagerAdapter(supportFragmentManager)
         viewPager.adapter = loginSignUpViewPagerAdapter
 
         tabLayout.setupWithViewPager(viewPager)
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-
     }
 
     private fun handleListeners() {

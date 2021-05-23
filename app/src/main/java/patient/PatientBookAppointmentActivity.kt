@@ -2,42 +2,49 @@ package patient
 
 import NON_AUTHORIZED_USER
 import PATIENT_BOOK_APPOINTMENT_TITLE
-import PATIENT_CREDENTIAL
-import SELECTED_DOCTOR
+import SELECTED_DOCTOR_ID
+import SELECTED_DOCTOR_NAME
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.google.android.material.button.MaterialButton
-import com.shubham.databasemodule.Database
 import com.shubham.doctorpatientandroidappnew.R
 import com.shubham.doctorpatientandroidappnew.databinding.ActivityPatientBookAppointmentBinding
 import com.shubham.doctorpatientandroidappnew.databinding.FutureDateItemBinding
+import entities.AppointmentEnt
 import helperFunctions.*
-import models.Appointment
-import models.AppointmentDetails
-import models.Doctor
-import models.Patient
+import kotlinx.coroutines.launch
 import patient.adapters.AvailableDoctorTimingAdapter
+import patient.viewModels.BookingAppointmentViewModel
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
 
 class PatientBookAppointmentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPatientBookAppointmentBinding
-    private lateinit var selectedDoctor: Doctor
     private lateinit var adapter: AvailableDoctorTimingAdapter
-    private lateinit var patient: Patient
-    private lateinit var availableTimeList: ArrayList<LocalTime>
-
+    private val availableTimeList by lazy { arrayListOf<LocalTime>() }
+    private var doctorId: Long = 0
+    private var patCredential: Long = 0
     private lateinit var bookingBtn: MaterialButton
-
+    private var previousBtn: MaterialButton? = null
     private var dateOfAppointment = LocalDate.now().minusDays(1)
+
+    private var isPageLoadedForFirstTime = true
+
+    private val context by lazy { this }
+
+    private lateinit var viewModel: BookingAppointmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,51 +53,99 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
 
         bookingBtn = binding.BookAppointmentBtnForPatient
         bookingBtn.isEnabled = false
-
-        val sharedPreferences = getPatientSharedPreferences(this)
-        val prefValue = sharedPreferences.getString(PATIENT_CREDENTIAL, "")
-        if (!prefValue.isNullOrEmpty()) {
-            val pat = Database.getPatientWithCredentials(prefValue)
-            if (pat != null)
-                patient = pat
-            else
-                closeActivity()
-        } else
-            closeActivity()
-
         this.getSupportActionBarView(PATIENT_BOOK_APPOINTMENT_TITLE)
 
-        val intent = intent
-        try {
-            selectedDoctor = intent.getParcelableExtra(SELECTED_DOCTOR)!!
-        } catch (exception: Exception) {
-            this.closeActivityWithToast("No Doctor Found")
+        doctorId = intent.getLongExtra(SELECTED_DOCTOR_ID, 0)
+
+        patCredential = this.getPatientCredentials()
+        if (!(patCredential > 0 || doctorId > 0)) {
+            closeActivity()
             return
         }
 
+        viewModel = ViewModelProvider(this).get(BookingAppointmentViewModel::class.java)
+
         binding.DoctorProfileUsernameForPatient.text =
-            getString(R.string.doctor_name, selectedDoctor.personName)
+            getString(R.string.doctor_name, intent.getStringExtra(SELECTED_DOCTOR_NAME))
 
         handleDatePickerDialog()
 
+        // handle Future Dates for Booking i.e 3 days from now and today date is inclusive
+        handleFutureDates()
+
         // Handle RecyclerView Layout Manager.
-        binding.DoctorAvailableTimingsRecyclerViewForPatient.layoutManager =
+        binding.AvailableTimingsRcyView.layoutManager =
             GridLayoutManager(
                 this,
                 3
             )
-        binding.DoctorAvailableTimingsRecyclerViewForPatient.addItemDecoration(
+        binding.AvailableTimingsRcyView.addItemDecoration(
             DividerItemDecoration(
                 this,
                 LinearLayoutManager.VERTICAL
             )
         )
 
-        // handle Future Dates for Booking i.e 3 days from now and today date is inclusive
-        handleFutureDates()
+        binding.ChooseTimingTxtViewForUser.text = getString(R.string.choose_the_date_of_appointment)
+
+        // Get the Booking for the current date by default
+        getAvailabilityOnADate(LocalDate.now())
     }
 
-    private var previousBtn: MaterialButton? = null
+    private fun getAvailabilityOnADate(selectedDate: LocalDate) {
+
+
+        viewModel.getAvailabilityOnADate(doctorId, selectedDate).observe(this, Observer { it ->
+            availableTimeList.clear()
+            if (it.isNotEmpty()) {
+                for (v in it) {
+                    val value = v.availabilities
+                    val startTime = value.fromTime
+                    val endTime = value.toTime
+                    val slotDuration = value.slotDuration
+                    val numSlots =
+                        (Duration.between(startTime, endTime).seconds / 60) / slotDuration
+                    for (i in 0 until numSlots) {
+                        availableTimeList.add(startTime.plusMinutes(slotDuration * i))
+                    }
+                }
+                viewModel.alreadyBookedAvailabilityOnADate(doctorId, selectedDate).observe(this,
+                    Observer {
+                        for (a in it) {
+                            availableTimeList.remove(a.timeOfAppointment)
+                        }
+                        if (availableTimeList.isEmpty()) {
+                            binding.NoTimeAvailableTxtView.visibility = View.VISIBLE
+                            val displayText =
+                                getString(R.string.no_slots_available, selectedDate.toString())
+                            binding.ChooseTimingTxtViewForUser.text = displayText
+                            binding.NoTimeAvailableTxtView.text = displayText
+                            hideTimeSlotRecyclerView()
+
+                            // Disable Booking Btn Also if no slots are available
+                            bookingBtn.isEnabled = false
+                        } else {
+                            bookingBtn.isEnabled = true
+                            hideNoSlotAvailableView()
+                            this.adapter =
+                                AvailableDoctorTimingAdapter(
+                                    availableTimeList
+                                )
+                            binding.ChooseTimingTxtViewForUser.text =
+                                getString(R.string.choose_the_time_of_appointment)
+                            binding.AvailableTimingsRcyView.adapter = this.adapter
+                            showTimeSlotRecyclerView()
+                        }
+                    })
+            } else {
+                binding.ChooseTimingTxtViewForUser.text =
+                    getString(R.string.no_slots_available, selectedDate.toString())
+                hideTimeSlotRecyclerView()
+                showNoSlotAvailableView()
+                bookingBtn.isEnabled = false
+            }
+        })
+    }
 
     private fun handleFutureDates() {
         val currentDate = LocalDate.now()
@@ -99,6 +154,19 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
             val btn = view.FutureDateBtn
             val nextDate = currentDate.plusDays(i.toLong())
             btn.text = nextDate.toString()
+
+            // Will only run for First Time i.e when page load.
+            if (isPageLoadedForFirstTime) {
+                isPageLoadedForFirstTime = false
+                previousBtn = btn
+                btn.setBackgroundColor(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.selected
+                    )
+                )
+            }
+
             btn.setOnClickListener {
                 dateOfAppointment = nextDate
                 getAvailabilityOnADate(nextDate)
@@ -128,56 +196,6 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun getAvailabilityOnADate(selectedDate: LocalDate) {
-        availableTimeList = arrayListOf()
-        val dateTimeMap = selectedDoctor.doctorAvailableDateTimeMap
-        if (dateTimeMap.containsKey(selectedDate)) {
-            val value = dateTimeMap[selectedDate]!!
-            for (v in value) {
-                val startTime = v.fromTime
-                val endTime = v.toTime
-                val slotDuration = v.slotDuration
-                val numSlots =
-                    (Duration.between(startTime, endTime).seconds / 60) / slotDuration
-                for (i in 0 until numSlots) {
-                    availableTimeList.add(startTime.plusMinutes(slotDuration * i))
-                }
-            }
-
-            // availableTimeList will contain all time slots on that particular date, so i have to filter out those which are previously booked.
-            val alreadyBookedOnADate =
-                Database.getAllAppointmentOnADate(selectedDoctor, selectedDate)
-            for (a in alreadyBookedOnADate) {
-                availableTimeList.remove(a.appointmentDetails.timeOfAppointment)
-            }
-
-            if (availableTimeList.isEmpty()) {
-                binding.NoTimeAvailableTxtView.visibility = View.VISIBLE
-                val displayText =
-                    "No Slots Are There For The Selected Date - $selectedDate"
-                binding.NoTimeAvailableTxtView.text = displayText
-                hideTimeSlotRecyclerView()
-
-                // Disable Booking Btn Also if no slots are available
-                bookingBtn.isEnabled = false
-            } else {
-                bookingBtn.isEnabled = true
-
-                hideNoSlotAvailableView()
-                adapter =
-                    AvailableDoctorTimingAdapter(
-                        availableTimeList
-                    )
-                binding.DoctorAvailableTimingsRecyclerViewForPatient.adapter = adapter
-                showTimeSlotRecyclerView()
-            }
-        } else {
-            hideTimeSlotRecyclerView()
-            showNoSlotAvailableView()
-            bookingBtn.isEnabled = false
-        }
-    }
-
     private fun handleDatePickerDialog() {
         binding.DateOfAppointmentBtn.setOnClickListener {
             this.getDatePickerDialog(
@@ -190,30 +208,38 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
         }
 
         binding.BookAppointmentBtnForPatient.setOnClickListener {
-            if (this::adapter.isInitialized && this::availableTimeList.isInitialized && availableTimeList.size > 0) {
-                val timeSelected = adapter.getSelected()
+            if (this::adapter.isInitialized && availableTimeList.size > 0 && patCredential > 0) {
+                val timeSelected = this.adapter.getSelected()
                 if (timeSelected != null) {
-                    val checkStatus = Database.saveAppointmentDataForPatient(
-                        Appointment(
-                            AppointmentDetails(
-                                patient,
-                                selectedDoctor,
-                                dateOfAppointment,
-                                LocalTime.parse(timeSelected.toString())
-                            )
-                        )
+                    val appointmentEnt = AppointmentEnt(
+                        doctorId, patCredential, dateOfAppointment, timeSelected, 20
                     )
-                    if (checkStatus)
-                        getToast(this, "Appointment Booked Successfully").show()
-                    else
-                        getToast(
-                            this,
-                            "$timeSelected  Slot is Unavailable Now, It's Booked"
-                        ).show()
+                    lifecycleScope.launch {
+                        val bookingId = viewModel.bookAnAppointment(
+                            appointmentEnt
+                        )
+                        context.getAlertDialog(
+                            getString(
+                                R.string.appointment_booked_status,
+                                bookingId
+                            ),
+                            SweetAlertDialog.SUCCESS_TYPE,
+                            false
+                        ) { alertDialog ->
+                            alertDialog.cancel()
+                            finish()
+                        }
+                    }
                 } else
-                    getToast(this, "Please Select The Time of Appointment").show()
+                    this.getAlertDialog(
+                        getString(R.string.timing_selection_required),
+                        SweetAlertDialog.ERROR_TYPE
+                    )
             } else
-                getToast(this, "Unable To Book the Appointment Due to Unavailability").show()
+                this.getAlertDialog(
+                    getString(R.string.unavailable_time),
+                    SweetAlertDialog.ERROR_TYPE
+                )
         }
     }
 
@@ -222,11 +248,11 @@ class PatientBookAppointmentActivity : AppCompatActivity() {
     }
 
     private fun showTimeSlotRecyclerView() {
-        binding.DoctorAvailableTimingsRecyclerViewForPatient.visibility = View.VISIBLE
+        binding.AvailableTimingsRcyView.visibility = View.VISIBLE
     }
 
     private fun hideTimeSlotRecyclerView() {
-        binding.DoctorAvailableTimingsRecyclerViewForPatient.visibility = View.GONE
+        binding.AvailableTimingsRcyView.visibility = View.GONE
     }
 
     private fun hideNoSlotAvailableView() {

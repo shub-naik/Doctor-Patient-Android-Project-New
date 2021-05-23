@@ -3,6 +3,7 @@ package patient.adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import daos.PatientDao
 import patient.PatientLoginFragment
 import patient.PatientSignupFragment
 
@@ -17,12 +18,12 @@ class LoginSignUpViewPagerAdapter(
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                PatientLoginFragment()
+                PatientLoginFragment.newInstance()
             }
             1 -> {
-                PatientSignupFragment()
+                PatientSignupFragment.newInstance()
             }
-            else -> PatientLoginFragment()
+            else -> PatientLoginFragment.newInstance()
         }
     }
 
