@@ -43,7 +43,7 @@ class PatientPastBookingFragment : Fragment() {
 
             list.observe(viewLifecycleOwner, Observer {
                 if (it.isNotEmpty()) {
-                    val adapter = PatientAppointmentAdapter(it, true)
+                    val adapter = PatientAppointmentAdapter(it, false)
                     val manager = requireActivity().getLinearLayoutManager()
                     recyclerView.layoutManager = manager
                     recyclerView.adapter = adapter
